@@ -1,8 +1,25 @@
+import classNames from 'classnames';
 import { Metadata } from 'next';
+import { Nunito, Orbitron } from 'next/font/google';
 import { Toaster } from 'sonner';
 
-import { ThemeProvider } from '@/components/custom/theme-provider';
+import { ThemeProvider } from '@/components/context/theme-provider';
+import { WalletProvider } from '@/components/context/wallet-provider'
+import Backdrop from '@/public/assets/images/bg.png';
 
+const fontNunito = Nunito({
+  subsets: ['vietnamese'],
+  variable: '--font-nunito',
+  display: 'swap',
+  weight: ['300', '400', '500', '700']
+});
+
+const fontOrbitron = Orbitron({
+  subsets: ['latin'],
+  variable: '--font-orbitron',
+  display: 'swap',
+  weight: ['400', '500', '700', '800', '900']
+});
 import './globals.css';
 
 export const metadata: Metadata = {
@@ -48,6 +65,7 @@ export default async function RootLayout({
       // prop is necessary to avoid the React hydration mismatch warning.
       // https://github.com/pacocoursey/next-themes?tab=readme-ov-file#with-app
       suppressHydrationWarning
+      className='w-full'
     >
       <head>
         <script
@@ -56,15 +74,22 @@ export default async function RootLayout({
           }}
         />
       </head>
-      <body className="antialiased">
+      <body className={classNames(fontNunito.variable, fontOrbitron.variable, fontOrbitron.className, ' scrollbar flex h-full flex-col antialiased')}>
         <ThemeProvider
           attribute="class"
           defaultTheme="system"
           enableSystem
           disableTransitionOnChange
         >
-          <Toaster position="top-center" />
-          {children}
+          <div
+            className={'nap-root relative flex grow flex-col items-center bg-cover bg-center bg-no-repeat'}
+            style={{ backgroundImage: `url(${Backdrop.src})` }}
+          >
+            <WalletProvider>
+              <Toaster position="top-center" />
+              {children}
+            </WalletProvider>
+          </div>
         </ThemeProvider>
       </body>
     </html>

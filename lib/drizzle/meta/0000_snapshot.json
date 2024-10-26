@@ -64,8 +64,8 @@
           "notNull": true,
           "default": "gen_random_uuid()"
         },
-        "email": {
-          "name": "email",
+        "username": {
+          "name": "username",
           "type": "varchar(64)",
           "primaryKey": false,
           "notNull": true

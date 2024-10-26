@@ -20,8 +20,8 @@ export const {
   providers: [
     Credentials({
       credentials: {},
-      async authorize({ email, password }: any) {
-        let users = await getUser(email);
+      async authorize({ username, password }: any) {
+        let users = await getUser(username);
         if (users.length === 0) return null;
         let passwordsMatch = await compare(password, users[0].password!);
         if (passwordsMatch) return users[0] as any;
