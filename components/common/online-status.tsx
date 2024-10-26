@@ -3,7 +3,7 @@
 import React, { FC } from 'react';
 import classNames from 'classnames';
 import useOnlineStatus from '@/common/hooks/use-online-status';
-import { ComponentBaseProps } from '@/common/interfaces';
+import { ComponentBaseProps } from '@/components/common/interface/component.interface';;
 
 const OnlineStatus: FC<ComponentBaseProps> = ({ className, ...rest }) => {
   const isOnline = useOnlineStatus();

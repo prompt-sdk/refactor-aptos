@@ -44,7 +44,6 @@ export function WalletSelector() {
   const submitForm = useRef<HTMLFormElement>(null)
   const [username, setUsername] = useState('')
   useEffect(() => {
-    console.log("state", state.status)
     if (state.status === "failed") {
       toast({
         title: 'Invalid credentials!',
@@ -64,6 +63,7 @@ export function WalletSelector() {
   const handleConnect = useCallback(async () => {
     setIsLoading(true);
     if (connected && account?.address) {
+      setUsername(account?.address.toString())
       toast({
         title: 'Connecting wallet...',
         description: 'Please wait while we connect your wallet.'
@@ -74,22 +74,26 @@ export function WalletSelector() {
 
   useEffect(() => {
     if (account?.address) {
-      setUsername(account?.address.toString())
       handleConnect();
     }
   }, [account, handleConnect]);
 
+  useEffect(() => {
+    if (username) {
+      submitForm.current?.requestSubmit()
+    }
+  }, [username]);
+
   const handleSubmit = (formData: FormData) => {
-  
     formAction(formData);
   };
 
   return (
-    <Form action={handleSubmit} ref={submitForm}>
+    <Form action={handleSubmit} ref={submitForm} disabled={isLoading}>
       <input
         id="username"
         name="username"
-        className="bg-muted text-md md:text-sm"
+        className="bg-muted text-md md:text-sm hidden"
         type="text"
         defaultValue={username}
         required
@@ -97,7 +101,7 @@ export function WalletSelector() {
       <input
         id="password"
         name="password"
-        className="bg-muted text-md md:text-sm"
+        className="bg-muted text-md md:text-sm hidden"
         type="text"
         defaultValue={username}
         required

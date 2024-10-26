@@ -1,4 +1,5 @@
 'use client';
+import { useWallet } from '@aptos-labs/wallet-adapter-react';
 import { ChevronUp } from 'lucide-react';
 import Image from 'next/image';
 import { type User } from 'next-auth';
@@ -19,6 +20,7 @@ import {
 } from '@/components/ui/sidebar';
 
 export function SidebarUserNav({ user }: { user: User }) {
+  const { account, connected, disconnect, wallet } = useWallet();
   const { setTheme, theme } = useTheme();
   return (
     <SidebarMenu>
@@ -50,8 +52,9 @@ export function SidebarUserNav({ user }: { user: User }) {
             <DropdownMenuItem asChild>
               <button
                 className="w-full "
-                onClick={() => {
-                  signOut({
+                onClick={async () => {
+                  await disconnect()
+                  await signOut({
                     redirectTo: '/',
                   });
                 }}

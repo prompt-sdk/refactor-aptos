@@ -3,7 +3,7 @@
 import { FC } from 'react';
 import Image from 'next/image';
 import classNames from 'classnames';
-import { ComponentBaseProps } from '@/common/interfaces';
+import { ComponentBaseProps } from '@/components/common/interface/component.interface';;
 
 import FooterFrame from '@/assets/svgs/footer-frame.svg';
 

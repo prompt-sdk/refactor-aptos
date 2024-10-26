@@ -1,6 +1,7 @@
-import React, { FC } from 'react';
 import classNames from 'classnames';
-import { ComponentBaseProps } from '@/common/interfaces';
+import React, { FC } from 'react';
+
+import { ComponentBaseProps } from '@/components/common/interface/component.interface';;
 
 type PageHeaderProps = {
   title: string;

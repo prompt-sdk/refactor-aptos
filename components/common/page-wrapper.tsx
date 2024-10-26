@@ -1,6 +1,6 @@
 import React, { FC, ReactNode } from 'react';
 import classNames from 'classnames';
-import { ComponentBaseProps } from '@/common/interfaces';
+import { ComponentBaseProps } from '@/components/common/interface/component.interface';;
 
 type PageWrapperProps = {
   children?: ReactNode;

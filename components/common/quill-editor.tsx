@@ -4,7 +4,7 @@
 // import classNames from 'classnames';
 // import Quill, { QuillOptions, Range } from 'quill';
 
-// import { ComponentBaseProps } from '@/common/interfaces';
+// import { ComponentBaseProps } from '@/components/common/interface/component.interface';;
 
 // import 'quill/dist/quill.snow.css';
 

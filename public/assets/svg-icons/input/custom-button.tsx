@@ -2,7 +2,7 @@
 
 import { FC } from 'react';
 import classNames from 'classnames';
-import { ComponentBaseProps } from '@/common/interfaces';
+import { ComponentBaseProps } from '@/components/common/interface/component.interface';;
 
 import BoderImage from '@/components/common/border-image';
 

@@ -7,8 +7,8 @@ CREATE TABLE IF NOT EXISTS "Chat" (
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "User" (
 	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
-	"username" varchar(64) NOT NULL,
-	"password" varchar(64)
+	"username" varchar(100) NOT NULL,
+	"password" varchar(100)
 );
 --> statement-breakpoint
 DO $$ BEGIN

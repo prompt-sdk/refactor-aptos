@@ -7,7 +7,7 @@ import { createUser, getUser } from '@/db/queries';
 import { signIn } from './auth';
 
 const authFormSchema = z.object({
-  username:z.string().min(6),
+  username: z.string().min(6),
   password: z.string().min(6),
 });
 
@@ -96,31 +96,35 @@ export const authenticate = async (
   _: AuthenticateActionState,
   formData: FormData
 ): Promise<AuthenticateActionState> => {
-  const validatedData = authFormSchema.parse({
-    username: formData.get('username'),
-    password: formData.get('password'),
-  });
-  console.log(validatedData)
-  let [user] = await getUser(validatedData.username);
-
-  if (user) {
-    await signIn('credentials', {
-      username: validatedData.username,
-      password: validatedData.password,
-      redirect: false,
+  try {
+    const validatedData = authFormSchema.parse({
+      username: formData.get('username'),
+      password: formData.get('password'),
     });
-    console.log("signin")
-    return { status: 'success' };
-  } else {
-    console.log("creatuser")
-    await createUser(validatedData.username, validatedData.password);
-    await signIn('credentials', {
-      username: validatedData.username,
-      password: validatedData.password,
-      redirect: false,
-    });
+    let [user] = await getUser(validatedData.username);
 
-    return { status: 'success' };
-  
+    if (user) {
+      await signIn('credentials', {
+        username: validatedData.username,
+        password: validatedData.password,
+        redirect: false,
+      });
+      return { status: 'success' };
+    } else {
+      await createUser(validatedData.username, validatedData.password);
+      await signIn('credentials', {
+        username: validatedData.username,
+        password: validatedData.password,
+        redirect: false,
+      });
+
+      return { status: 'success' };
+    }
+  } catch (error) {
+    if (error instanceof z.ZodError) {
+      return { status: 'invalid_data' };
+    }
+
+    return { status: 'failed' };
   }
 };

@@ -1,7 +1,9 @@
-import React, { FC } from 'react';
-import classNames from 'classnames';
-import { ComponentBaseProps } from '@/common/interfaces';
 import { CountdownTimerIcon } from '@radix-ui/react-icons';
+import classNames from 'classnames';
+import React, { FC } from 'react';
+
+import { ComponentBaseProps } from '@/components/common/interface/component.interface';
+
 
 type CountDownProps = ComponentBaseProps & {
   value: number;
