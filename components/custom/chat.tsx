@@ -46,6 +46,7 @@ export function Chat({
 
         {messages.map((message) => (
           <PreviewMessage
+            sender={message.role}
             key={message.id}
             role={message.role}
             content={message.content}
