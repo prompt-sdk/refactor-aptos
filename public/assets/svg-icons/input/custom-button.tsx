@@ -6,7 +6,7 @@ import { ComponentBaseProps } from '@/components/common/interface/component.inte
 
 import BoderImage from '@/components/common/border-image';
 
-import ProfileBtnFrame from '@/assets/svgs/profile-btn-frame.svg';
+import ProfileBtnFrame from '@/public/assets/svgs/profile-btn-frame.svg';
 import { cn } from '@/components/utils';
 
 type CustomButtonProps = ComponentBaseProps & {

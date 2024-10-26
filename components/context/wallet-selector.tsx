@@ -89,7 +89,7 @@ export function WalletSelector() {
   };
 
   return (
-    <Form action={handleSubmit} ref={submitForm} disabled={isLoading}>
+    <Form action={handleSubmit} ref={submitForm} disabled={isLoading} className=''>
       <input
         id="username"
         name="username"

@@ -1,13 +1,15 @@
 'use client';
 
-import { FC } from 'react';
-import Image from 'next/image';
 import classNames from 'classnames';
+import Image from 'next/image';
+import { FC } from 'react';
+
+// eslint-disable-next-line import/order
 import { ComponentBaseProps } from '@/components/common/interface/component.interface';;
 
-import HeaderFrame from '@/assets/svgs/header-frame.svg';
-import HeaderTopLeftElement from '@/assets/svgs/header-top-left-element.svg';
-import HeaderTopRightElement from '@/assets/svgs/header-top-right-element.svg';
+import HeaderFrame from '@/public/assets/svgs/header-frame.svg';
+import HeaderTopLeftElement from '@/public/assets/svgs/header-top-left-element.svg';
+import HeaderTopRightElement from '@/public/assets/svgs/header-top-right-element.svg';
 
 type MainHeaderProps = ComponentBaseProps & {
   title?: string;
@@ -22,7 +24,7 @@ const MainHeader: FC<MainHeaderProps> = ({ className, title = 'Prompt Wallet' })
           alt="Header Top Left Element"
           width={HeaderTopLeftElement.width}
           height={HeaderTopLeftElement.height}
-          className="mr-auto max-w-[100%]"
+          className="mr-auto max-w-full"
         />
       </div>
       <div className="relative grow lg:shrink-0 lg:grow-0">
@@ -39,7 +41,7 @@ const MainHeader: FC<MainHeaderProps> = ({ className, title = 'Prompt Wallet' })
       </div>
       <div className="hidden grow lg:block">
         <Image
-          className="ml-auto max-w-[100%]"
+          className="ml-auto max-w-full"
           src={HeaderTopRightElement.src}
           alt="Header Top Right Element"
           width={HeaderTopRightElement.width}

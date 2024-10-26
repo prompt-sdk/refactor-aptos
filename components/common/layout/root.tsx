@@ -3,8 +3,7 @@
 import React, { FC, ReactNode } from 'react';
 import classNames from 'classnames';
 import { ComponentBaseProps } from '@/common/interfaces/component.interface';
-
-import Backdrop from '@/assets/images/bg.png';
+import Backdrop from '@/public/assets/images/bg.png';
 
 type RootProps = {
   children?: ReactNode;

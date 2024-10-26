@@ -5,7 +5,7 @@ import Image from 'next/image';
 import classNames from 'classnames';
 import { ComponentBaseProps } from '@/components/common/interface/component.interface';;
 
-import FooterFrame from '@/assets/svgs/footer-frame.svg';
+import FooterFrame from '@/public/assets/svgs/footer-frame.svg';
 
 type MainFooterProps = ComponentBaseProps;
 

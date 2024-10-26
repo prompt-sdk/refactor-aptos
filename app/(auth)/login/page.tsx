@@ -1,68 +1,37 @@
 "use client";
 import Image from 'next/image';
-import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useActionState, useEffect, useState } from "react";
-import { toast } from "sonner";
 
 import { WalletSelector } from '@/components/context/wallet-selector';
-import { AuthForm } from "@/components/custom/auth-form";
-import { SubmitButton } from "@/components/custom/submit-button";
 import LoginBg from '@/public/assets/images/modal-login-frame.png';
 
 import { login, LoginActionState } from "../actions";
 export default function Page() {
   const router = useRouter();
 
-  const [email, setEmail] = useState("");
 
-  const [state, formAction] = useActionState<LoginActionState, FormData>(
-    login,
-    {
-      status: "idle",
-    },
-  );
-
-  useEffect(() => {
-    if (state.status === "failed") {
-      toast.error("Invalid credentials!");
-    } else if (state.status === "invalid_data") {
-      toast.error("Failed validating your submission!");
-    } else if (state.status === "success") {
-      router.refresh();
-    }
-  }, [state.status, router]);
-
-  const handleSubmit = (formData: FormData) => {
-    setEmail(formData.get("email") as string);
-    formAction(formData);
-  };
 
   return (
     <div className="flex grow items-center justify-center">
       <div className="container flex flex-col items-center justify-center">
-        <Image
-          src={LoginBg.src}
-          alt="Modal Login Frame"
-          width={458}
-          height={658}
-          className="absolute left-0 top-0 z-0 size-full"
-        />
+
         <div className="relative h-[400px] w-full max-w-[400px]">
-          <AuthForm action={handleSubmit} defaultEmail={email}>
-            <SubmitButton>Sign in</SubmitButton>
-            <p className="text-center text-sm text-gray-600 mt-4 dark:text-zinc-400">
-              {"Don't have an account? "}
-              <Link
-                href="/register"
-                className="font-semibold text-gray-800 hover:underline dark:text-zinc-200"
-              >
-                Sign up
-              </Link>
-              {" for free."}
-            </p>
-          </AuthForm>
-          <WalletSelector />
+
+          <Image
+            src={LoginBg.src}
+            alt="Modal Login Frame"
+            width={458}
+            height={658}
+            className="absolute left-0 top-0 z-0 size-full"
+          />
+          <div className="mb-20 mt-5 flex w-full flex-col gap-3 sm:gap-5">
+            <div className='relative z-1 flex h-full flex-col gap-12 px-10 py-14 sm:gap-8 sm:px-7'>
+              <h1 className="text-xs sm:text-xl">Welcome to Aptos</h1>
+              <p className="text-[10px] sm:text-xs">Sign in with your Google account to continue</p>
+              <WalletSelector />
+            </div>
+
+          </div>
         </div>
       </div>
     </div>
