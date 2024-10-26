@@ -127,8 +127,6 @@ function ConnectWalletDialog({ close }: ConnectWalletDialogProps) {
   const hasAptosConnectWallets = !!aptosConnectWallets.length;
 
   return (
-    // .if connect  use Ref trigger check ai-pgf 
-
     <DialogContent className="max-h-screen overflow-auto">
       <AboutAptosConnect renderEducationScreen={renderEducationScreen}>
         <DialogHeader>

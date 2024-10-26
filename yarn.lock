@@ -1914,6 +1914,11 @@ asynckit@^0.4.0:
   resolved "https://registry.npmjs.org/asynckit/-/asynckit-0.4.0.tgz"
   integrity sha512-Oei9OH4tRh0YqU3GxhX79dM/mwVgvbZJaSNaRk+bshkj0S5cfHcgYakreBjrHwatXKbz+IoIdYLxrKim2MjW0Q==
 
+augmented-ui@^2.0.0:
+  version "2.0.0"
+  resolved "https://registry.npmjs.org/augmented-ui/-/augmented-ui-2.0.0.tgz"
+  integrity sha512-5hp6zqzNwn7mhhdgZq5kOqzK5el642ubKJNR++5Desou9RnMuxQ0MtCzxAu/dkoXn8wmQoqzwagGmVY4La7NjA==
+
 available-typed-arrays@^1.0.7:
   version "1.0.7"
   resolved "https://registry.npmjs.org/available-typed-arrays/-/available-typed-arrays-1.0.7.tgz"
