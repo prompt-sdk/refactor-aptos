@@ -1669,6 +1669,11 @@
   dependencies:
     undici-types "~5.26.4"
 
+"@types/pako@^2.0.3":
+  version "2.0.3"
+  resolved "https://registry.npmjs.org/@types/pako/-/pako-2.0.3.tgz"
+  integrity sha512-bq0hMV9opAcrmE0Byyo0fY3Ew4tgOevJmQ9grUhpXQhYfyLJ1Kqg3P33JT5fdbT2AjeAjR51zqqVjAL/HMkx7Q==
+
 "@types/pdf-parse@^1.1.4":
   version "1.1.4"
   resolved "https://registry.npmjs.org/@types/pdf-parse/-/pdf-parse-1.1.4.tgz"
