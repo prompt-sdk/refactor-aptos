@@ -28,14 +28,13 @@ export const chat = pgTable('Chat', {
 
 export const tool = pgTable('Tool', {
   id: uuid('id').primaryKey().notNull().defaultRandom(),
+  createdAt: timestamp('createdAt').defaultNow(),
   name: text('name').notNull(),
   typeName: varchar('typeName', { length: 64 }).notNull(),
   description: text('description'),
   //Tool Contract
   params: json('params'),
-  generic_type_params: text('generic_type_params')
-    .array()
-    .default(sql`ARRAY[]::text[]`),
+  type_params: json('type_params'),
   functions: varchar('functions', { length: 256 }),
   typeFunction: varchar('typeFunction', { length: 64 }),
   // Tool API
@@ -44,9 +43,7 @@ export const tool = pgTable('Tool', {
   // Tool Widget
   prompt: text('prompt'),
   code: text('code'),
-  toolImportWidget: text('toolImportWidget')
-    .array()
-    .default(sql`ARRAY[]::text[]`),
+  toolWidget: json('toolWidget'),
   //UserId
   userId: uuid('userId')
     .notNull()
@@ -63,7 +60,7 @@ export const agent = pgTable('Agent', {
   intro: varchar('intro', { length: 256 }),
   prompt: text('prompt').notNull(),
   suggestedActions: json('suggestedActions'),
-  tool: json('suggestedActions'),
+  tool: json('tool'),
   userId: uuid('userId')
     .notNull()
     .references(() => user.id),

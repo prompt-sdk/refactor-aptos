@@ -4,7 +4,8 @@
   "private": true,
   "scripts": {
     "dev": "next dev --turbo",
-    "build": "tsx db/migrate && next build",
+    "migrate": "tsx db/migrate",
+    "build": "next build",
     "start": "next start",
     "lint": "next lint"
   },
