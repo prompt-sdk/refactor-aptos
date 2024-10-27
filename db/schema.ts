@@ -26,16 +26,6 @@ export const chat = pgTable('Chat', {
     .references(() => user.id),
 });
 
-export const suggestedActions = pgTable('SuggestedActions', {
-  id: uuid('id').primaryKey().notNull().defaultRandom(),
-  title: varchar('title', { length: 64 }).notNull(),
-  description: varchar('description', { length: 256 }),
-  content: varchar('description', { length: 256 }).notNull(),
-  agentId: uuid('agentId')
-    .notNull()
-    .references(() => agent.id),
-});
-
 export const tool = pgTable('Tool', {
   id: uuid('id').primaryKey().notNull().defaultRandom(),
   name: text('name').notNull(),
@@ -69,10 +59,13 @@ export const agent = pgTable('Agent', {
   name: varchar('name', { length: 64 }).notNull(),
   description: varchar('description', { length: 256 }).notNull(),
   avatar: varchar('avatar', { length: 256 }).notNull(),
+  intro: varchar('intro', { length: 256 }),
+  suggestedActions: text('suggestedActions')
+    .array()
+    .default(sql`ARRAY[]::text[]`),
   tool: text('tool')
     .array()
     .default(sql`ARRAY[]::text[]`),
-  intro: varchar('intro', { length: 256 }),
   userId: uuid('userId')
     .notNull()
     .references(() => user.id),
