@@ -1,7 +1,7 @@
 'server-only';
 
 import { genSaltSync, hashSync } from 'bcrypt-ts';
-import { desc, eq } from 'drizzle-orm';
+import { desc, eq, inArray } from 'drizzle-orm';
 import { drizzle } from 'drizzle-orm/postgres-js';
 import postgres from 'postgres';
 
@@ -138,6 +138,14 @@ export async function createAgent({
 export async function getTool(id: string): Promise<Array<Tool>> {
   try {
     return await db.select().from(tool).where(eq(tool.id, id));
+  } catch (error) {
+    console.error('Failed to get user from database');
+    throw error;
+  }
+}
+export async function getTools(ids: any[]): Promise<Array<Tool>> {
+  try {
+    return await db.select().from(tool).where(inArray(tool.id, ids));
   } catch (error) {
     console.error('Failed to get user from database');
     throw error;
