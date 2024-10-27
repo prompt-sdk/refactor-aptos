@@ -6,5 +6,5 @@ export async function GET() {
     return Response.json("Unauthorized!", { status: 401 });
   }
 
-  return "test"
+  return Response.json("status", { status: 200 })
 }
