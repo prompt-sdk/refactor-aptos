@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
-import CustomButton from '@/libs/svg-icons/input/custom-button';
+import React, { useState } from 'react';
+
+import CustomButton from '@/components/custom/custom-button';
 
 interface Widget {
   _id: string;
@@ -61,7 +62,7 @@ const MultiSelectWidgets: React.FC<MultiSelectWidgetsProps> = ({
           )}
         </div>
         <motion.svg
-          className={`h-5 w-5 transform transition-transform ${isOpen ? 'rotate-180' : ''}`}
+          className={`size-5  transition-transform ${isOpen ? 'rotate-180' : ''}`}
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"
@@ -90,9 +91,8 @@ const MultiSelectWidgets: React.FC<MultiSelectWidgetsProps> = ({
               widgets.map(widget => (
                 <div
                   key={widget._id}
-                  className={`cursor-pointer p-2 hover:bg-[#383C41] ${
-                    selectedWidgets.includes(widget._id) ? 'bg-[#383C41]' : ''
-                  }`}
+                  className={`cursor-pointer p-2 hover:bg-[#383C41] ${selectedWidgets.includes(widget._id) ? 'bg-[#383C41]' : ''
+                    }`}
                   onClick={() => toggleWidget(widget._id)}
                 >
                   <div className="flex flex-col">

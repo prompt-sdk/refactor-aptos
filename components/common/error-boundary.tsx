@@ -1,10 +1,9 @@
 'use client';
 
-import { FC, ReactNode } from 'react';
 import { useSearchParams } from 'next/navigation';
+import { FC, ReactNode } from 'react';
 import { ErrorBoundary as ReactErrorBoundary, useErrorBoundary } from 'react-error-boundary';
 
-import { useRouter } from 'next/navigation';
 
 type ErrorFallbackProps = {
   error: Error;

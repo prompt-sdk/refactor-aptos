@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
-import CustomButton from '@/libs/svg-icons/input/custom-button';
+import React, { useState } from 'react';
 
-import { Tool } from '@/modules/tools/interfaces/tool.interface';
+import { Tool } from '@/components/common/interface/tool.interface';
+import CustomButton from '@/components/custom/custom-button';
+
 
 interface IMultiSelectToolsProps {
   tools: Tool[];
@@ -51,7 +52,7 @@ const MultiSelectTools: React.FC<IMultiSelectToolsProps> = ({
           )}
         </div>
         <motion.svg
-          className={`h-5 w-5 transform transition-transform ${isOpen ? 'rotate-180' : ''}`}
+          className={`size-5 transition-transform ${isOpen ? 'rotate-180' : ''}`}
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"
@@ -80,9 +81,8 @@ const MultiSelectTools: React.FC<IMultiSelectToolsProps> = ({
               tools.map(tool => (
                 <div
                   key={tool._id}
-                  className={`cursor-pointer p-2 py-3 hover:bg-[#383C41] ${
-                    selectedTools.includes(tool._id) ? 'bg-[#383C41]' : ''
-                  }`}
+                  className={`cursor-pointer p-2 py-3 hover:bg-[#383C41] ${selectedTools.includes(tool._id) ? 'bg-[#383C41]' : ''
+                    }`}
                   onClick={() => toggleTool(tool._id)}
                 >
                   <div className="flex flex-col">

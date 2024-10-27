@@ -1,7 +1,8 @@
 'use client';
 
-import { FC } from 'react';
 import classNames from 'classnames';
+import { FC } from 'react';
+
 import { ComponentBaseProps } from '@/components/common/interface/component.interface';
 
 import '../style.scss';

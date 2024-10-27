@@ -1,7 +1,9 @@
-import React, { FC } from 'react';
 import classNames from 'classnames';
+import React, { FC } from 'react';
+
 import { ComponentBaseProps } from '@/components/common/interface/component.interface';;
 
+// eslint-disable-next-line import/order
 import Link from 'next/link';
 
 type MenuProps = ComponentBaseProps;
