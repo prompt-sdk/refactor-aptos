@@ -12,7 +12,6 @@ import AugmentedPopup from '@/components/augmented/components/augmented-popup';
 import DashboardAvatar from '@/components/common/dashboard-avatar';
 import FormTextField from '@/components/common/form-text-field';
 import MultiSelectTools from '@/components/common/multi-select';
-import MultiSelectWidgets from '@/components/common/multi-select-widget';
 import { Session } from 'next-auth';
 import axios from 'axios';
 import { Textarea } from '@/components/ui/textarea';

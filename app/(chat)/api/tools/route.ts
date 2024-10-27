@@ -53,7 +53,7 @@ export async function POST(request: NextRequest) {
         switch (typeName) {
             case 'apiTool':
                 const { accessToken, spec } = otherProps;
-                if (!accessToken || !spec) {
+                if (!spec) {
                     return NextResponse.json({ error: 'Missing required fields for API tool' }, { status: 400 });
                 }
                 result = await createApiTool({
@@ -65,7 +65,7 @@ export async function POST(request: NextRequest) {
                 break;
 
             case 'contractTool':
-                const { params, typeFunction, functions } = otherProps;
+                const { params, typeFunction, functions, type_params } = otherProps;
                 if (!params || !typeFunction || !functions) {
                     return NextResponse.json({ error: 'Missing required fields for Contract tool' }, { status: 400 });
                 }
@@ -74,6 +74,7 @@ export async function POST(request: NextRequest) {
                     params,
                     typeFunction,
                     functions,
+                    type_params,
                 } as Tool);
                 break;
 
@@ -85,7 +86,7 @@ export async function POST(request: NextRequest) {
                 result = await createWidgetTool({
                     ...commonProps,
                     prompt,
-                    code,
+                    code: JSON.stringify(code),
                     toolWidget,
                     } as Tool
                 );
