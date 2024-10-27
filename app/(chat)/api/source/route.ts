@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { HexString, Types } from 'aptos';
 import pako from 'pako';
-import { executeTool } from '@/modules/ai/chain';
+import { contractTool } from '@/ai/contract-tool';
 
 export const maxDuration = 300;
 const transformCode = (source: string): string => {
@@ -37,7 +37,7 @@ export async function GET(req: NextRequest) {
   const sourceCode = bytecode.source === '0x' ? undefined : transformCode(bytecode.source);
   try {
     if (sourceCode) {
-      const result = await executeTool({ sourceCode, account, moduleName, functions });
+      const result = await contractTool({ sourceCode, account, moduleName, functions });
       return NextResponse.json(JSON.parse(result), { status: 200 });
     } else {
       return NextResponse.json({ error: 'source is not complie' }, { status: 500 });
