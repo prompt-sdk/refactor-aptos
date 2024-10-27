@@ -1,8 +1,9 @@
-import React, { useEffect, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
-import CustomButton from '@/libs/svg-icons/input/custom-button';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
+import React, { useEffect, useRef, useState } from 'react';
+
+import CustomButton from '@/components/custom/custom-button';
 
 export type SelectOption = {
   label: string;

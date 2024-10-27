@@ -1,5 +1,5 @@
-import React, { FC, ReactNode } from 'react';
 import dynamic from 'next/dynamic';
+import React, { FC, ReactNode } from 'react';
 
 interface INoSSRProps {
   children: ReactNode;

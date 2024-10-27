@@ -1,8 +1,10 @@
 'use client';
 
-import { FC } from 'react';
-import Image from 'next/image';
 import classNames from 'classnames';
+import Image from 'next/image';
+import { FC } from 'react';
+
+// eslint-disable-next-line import/order
 import { ComponentBaseProps } from '@/components/common/interface/component.interface';;
 
 import FooterFrame from '@/public/assets/svgs/footer-frame.svg';
