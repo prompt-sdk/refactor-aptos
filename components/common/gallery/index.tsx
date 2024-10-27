@@ -1,13 +1,15 @@
-import React, { FC, useState } from 'react';
 import Image, { StaticImageData } from 'next/image';
-import { Autoplay, EffectFade, FreeMode, Navigation, Pagination, Thumbs } from 'swiper/modules';
-import { Swiper, SwiperRef, SwiperSlide } from 'swiper/react';
-import type SwiperClass from 'swiper/types/swiper-class';
-import useSwiper from '@/common/hooks/use-swiper';
-
 import Link from 'next/link';
+import React, { FC, useState } from 'react';
+import { Autoplay, EffectFade, FreeMode, Navigation, Pagination, Thumbs } from 'swiper/modules';
+import { Swiper, SwiperRef, SwiperSlide, SwiperClass } from 'swiper/react';
 
 import style from './style.module.scss';
+import useSwiper from '../hooks/use-swiper';
+
+
+
+
 
 interface IGalleryProps {
   images: StaticImageData[];
@@ -72,9 +74,8 @@ const Gallery: FC<IGalleryProps> = ({ images = [], thumbCount = 2 }) => {
           {paginationRef?.slides.map((slide, index: number) => (
             <span
               key={`pagination-${index}`}
-              className={`swiper-pagination-bullet ${
-                paginationRef.activeIndex === index ? 'swiper-pagination-bullet-active' : ''
-              }`}
+              className={`swiper-pagination-bullet ${paginationRef.activeIndex === index ? 'swiper-pagination-bullet-active' : ''
+                }`}
               onClick={() => paginationRef.slideTo(index)}
             />
           ))}

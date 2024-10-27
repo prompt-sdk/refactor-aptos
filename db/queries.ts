@@ -101,7 +101,7 @@ export async function getChatById({ id }: { id: string }) {
 
 export async function getAgent(id: string): Promise<Array<Agent>> {
   try {
-    return await db.select().from(agent).where(eq(agent.id, id));
+    return await db.select().from(agent).where(eq(agent.userId, id));
   } catch (error) {
     console.error('Failed to get user from database');
     throw error;
