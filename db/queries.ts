@@ -5,8 +5,7 @@ import { desc, eq } from 'drizzle-orm';
 import { drizzle } from 'drizzle-orm/postgres-js';
 import postgres from 'postgres';
 
-import { user, chat, User, agent, Agent } from './schema';
-import { date } from 'drizzle-orm/mysql-core';
+import { user, chat, User, agent, Agent, tool, Tool } from './schema';
 
 // Optionally, if not using username/pass login, you can
 // use the Drizzle adapter for Auth.js / NextAuth
@@ -128,6 +127,86 @@ export async function createAgent({
       prompt,
       avatar,
       intro,
+      userId,
+    });
+  } catch (error) {
+    console.error('Failed to create user in database');
+    throw error;
+  }
+}
+
+export async function getTool(id: string): Promise<Array<Tool>> {
+  try {
+    return await db.select().from(tool).where(eq(tool.id, id));
+  } catch (error) {
+    console.error('Failed to get user from database');
+    throw error;
+  }
+}
+
+export async function createApiTool({
+  name,
+  description,
+  typeName,
+  accessToken,
+  spec,
+  userId,
+}: Tool) {
+  try {
+    return await db.insert(tool).values({
+      typeName,
+      name,
+      description,
+      accessToken,
+      spec,
+      userId,
+    });
+  } catch (error) {
+    console.error('Failed to create user in database');
+    throw error;
+  }
+}
+export async function createContractTool({
+  name,
+  description,
+  typeName,
+  params,
+  typeFunction,
+  functions,
+  userId,
+}: Tool) {
+  try {
+    return await db.insert(tool).values({
+      name,
+      description,
+      typeName,
+      params,
+      typeFunction,
+      functions,
+      userId,
+    });
+  } catch (error) {
+    console.error('Failed to create user in database');
+    throw error;
+  }
+}
+export async function createWidgetTool({
+  name,
+  description,
+  typeName,
+  prompt,
+  code,
+  toolWidget,
+  userId,
+}: Tool) {
+  try {
+    return await db.insert(tool).values({
+      name,
+      description,
+      typeName,
+      prompt,
+      code,
+      toolWidget,
       userId,
     });
   } catch (error) {

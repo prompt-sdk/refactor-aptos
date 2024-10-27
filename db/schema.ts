@@ -52,6 +52,7 @@ export const tool = pgTable('Tool', {
     .notNull()
     .references(() => user.id),
 });
+export type Tool = InferSelectModel<typeof tool>;
 
 export const agent = pgTable('Agent', {
   id: uuid('id').primaryKey().notNull().defaultRandom(),
