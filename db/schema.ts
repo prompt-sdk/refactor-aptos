@@ -55,17 +55,14 @@ export const tool = pgTable('Tool', {
 
 export const agent = pgTable('Agent', {
   id: uuid('id').primaryKey().notNull().defaultRandom(),
-  createdAt: timestamp('createdAt').notNull(),
+  createdAt: timestamp('createdAt').notNull().defaultNow(),
   name: varchar('name', { length: 64 }).notNull(),
   description: varchar('description', { length: 256 }).notNull(),
   avatar: varchar('avatar', { length: 256 }).notNull(),
   intro: varchar('intro', { length: 256 }),
-  suggestedActions: text('suggestedActions')
-    .array()
-    .default(sql`ARRAY[]::text[]`),
-  tool: text('tool')
-    .array()
-    .default(sql`ARRAY[]::text[]`),
+  prompt: text('prompt').notNull(),
+  suggestedActions: json('suggestedActions'),
+  tool: json('suggestedActions'),
   userId: uuid('userId')
     .notNull()
     .references(() => user.id),
