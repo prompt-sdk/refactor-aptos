@@ -14,7 +14,7 @@ import UserIcon from '@/public/assets/svgs/user-icon.svg';
 import { Markdown } from './markdown';
 import { PreviewAttachment } from './preview-attachment';
 import { Weather } from './weather';
-import '@/components/augmented/style.scss';
+import '@/components/augmented/style.css';
 
 
 export const Message = ({

@@ -1,12 +1,13 @@
 'use client';
 
-import { FC, useEffect, useRef } from 'react';
 import classNames from 'classnames';
-import { ComponentBaseProps } from '@/common/interfaces';
+import Image from 'next/image';
+import { FC, useEffect, useRef } from 'react';
 
+import { ComponentBaseProps } from '@/components/common/interface/component.interface';
 import '../style.scss';
 import { Dialog, DialogContent, DialogHeader } from '@/components/ui/dialog';
-import ButtonClose from '@/assets/svgs/popup-close.svg';
+import ButtonClose from '@/public/assets/svgs/popup-close.svg';
 
 type AugmentedPopupProps = ComponentBaseProps & {
   children: React.ReactNode;
@@ -28,10 +29,10 @@ const AugmentedPopup: FC<AugmentedPopupProps> = ({ children, visible = false, on
           className
         )}
       >
-        <DialogHeader className="flex flex-col-reverse justify-between border-b-[1px] border-[#3F454D] px-8 pb-6 pt-8 text-left text-lg md:flex-row md:items-center">
+        <DialogHeader className="flex flex-col-reverse justify-between border-b border-[#3F454D] px-8 pb-6 pt-8 text-left text-lg md:flex-row md:items-center">
           <div className="grow">{textHeading}</div>
           <div className="ml-auto shrink-0 cursor-pointer p-1" onClick={onClose}>
-            <img src={ButtonClose.src} alt="close" width={ButtonClose.width} height={ButtonClose.height} />
+            <Image src={ButtonClose.src} alt="close" width={ButtonClose.width} height={ButtonClose.height} />
           </div>
         </DialogHeader>
         {children}

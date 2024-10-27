@@ -18,7 +18,7 @@ import { PreviewAttachment } from './preview-attachment';
 import useWindowSize from './use-window-size';
 import { Button } from '../ui/button';
 import { Textarea } from '../ui/textarea';
-import '@/components/augmented/style.scss';
+import '@/components/augmented/style.css';
 
 const suggestedActions = [
   {
