@@ -17,7 +17,7 @@ export async function GET(request: NextRequest) {
     const agents = await getAgentByUserId(id);
 
     if (agents.length === 0) {
-      return NextResponse.json({ error: 'Agent not found' }, { status: 404 });
+      return NextResponse.json(agents);
     }
 
     return NextResponse.json(agents);

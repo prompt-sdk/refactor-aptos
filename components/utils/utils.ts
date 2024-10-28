@@ -6,7 +6,6 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-
 export function getAptosClient() {
   const config = new AptosConfig({ network: Network.TESTNET });
   return new Aptos(config);

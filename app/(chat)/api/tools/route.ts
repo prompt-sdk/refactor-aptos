@@ -24,7 +24,7 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
     try {
         const body = await request.json();
-        const { typeName, name, description, userId, ...otherProps } = body;
+        const { typeName, name, description, userId, id, ...otherProps } = body;
 
         if (!typeName || !name || !description || !userId) {
             return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
@@ -33,7 +33,7 @@ export async function POST(request: NextRequest) {
         let result;
 
         const commonProps: Partial<Tool> = {
-            id: crypto.randomUUID(),
+            id: id || crypto.randomUUID(),
             name,
             description,
             userId,

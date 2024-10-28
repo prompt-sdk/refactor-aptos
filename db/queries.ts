@@ -181,6 +181,7 @@ export async function getTools(ids: any[]): Promise<Array<Tool>> {
 }
 
 export async function createApiTool({
+  id,
   name,
   description,
   typeName,
@@ -190,6 +191,7 @@ export async function createApiTool({
 }: Tool) {
   try {
     return await db.insert(tool).values({
+      id,
       typeName,
       name,
       description,
@@ -203,6 +205,7 @@ export async function createApiTool({
   }
 }
 export async function createContractTool({
+  id,
   name,
   description,
   typeName,
@@ -214,6 +217,7 @@ export async function createContractTool({
 }: Tool) {
   try {
     return await db.insert(tool).values({
+      id,
       name,
       description,
       typeName,
@@ -229,6 +233,7 @@ export async function createContractTool({
   }
 }
 export async function createWidgetTool({
+  id,
   name,
   description,
   typeName,
@@ -239,6 +244,7 @@ export async function createWidgetTool({
 }: Tool) {
   try {
     return await db.insert(tool).values({
+      id,
       name,
       description,
       typeName,
