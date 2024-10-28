@@ -110,6 +110,16 @@ export async function getAgentByUserId(userId: string): Promise<Array<Agent>> {
     throw error;
   }
 }
+
+export async function getAgentByAddress(address: string): Promise<Array<Agent>> {
+  try {
+    return await db.select().from(agent).where(eq(agent.address, address));
+  } catch (error) {
+    console.error('Failed to get user from database');
+    throw error;
+  }
+}
+
 export async function getAgentById(id: string) {
   try {
     const [selectedAgent] = await db

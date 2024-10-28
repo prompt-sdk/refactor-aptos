@@ -29,7 +29,7 @@ const ProfileWidget: FC<ProfileWidgetProps> = ({ className, address }) => {
     setIsLoading(true);
     try {
       if (address) {
-        const response = await fetch(`/api/agents?id=${address}`);
+        const response = await fetch(`/api/agents?address=${address}`);
         if (!response.ok) {
           throw new Error('Failed to fetch agent');
         }

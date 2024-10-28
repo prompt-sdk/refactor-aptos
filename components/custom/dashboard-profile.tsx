@@ -183,7 +183,7 @@ const DashboardProfile = ({session}:{session: Session|null}) => {
   return (
     <BoderImage className={classNames('relative flex w-full max-w-[483px] justify-center')}>
       <DashboardTopProfileDecor />
-      <div className="relative flex flex-col gap-6 px-4 py-6">
+      <div className="relative flex flex-col gap-6 px-4 py-6 w-full mt-5">
         <div className="flex flex-wrap items-start justify-between gap-2">
           <div className="flex grow flex-wrap items-center gap-2 md:flex-nowrap">
             <DashboardAvatar className="shrink-0" imageUrl={'/assets/images/avatar/avatar-1.jpeg'} altText="Avatar" />
@@ -251,11 +251,11 @@ const DashboardProfile = ({session}:{session: Session|null}) => {
           />
         </div>
 
-        <div className="flex flex-wrap items-center gap-2 md:flex-nowrap">
-          <CustomButton className="w-full md:w-auto" onClick={toggleOpenSend}>
+        <div className="flex flex-wrap items-center gap-2 md:flex-nowrap w-full">
+          <CustomButton className="w-full md:w-1/2" onClick={toggleOpenSend}>
             <i className="ico-send-right-icon" /> Send
           </CustomButton>
-          <CustomButton className="w-full md:w-auto" onClick={toggleOpenReceive}>
+          <CustomButton className="w-full md:w-1/2" onClick={toggleOpenReceive}>
             <i className="ico-wallet-icon" /> Receive
           </CustomButton>
         </div>

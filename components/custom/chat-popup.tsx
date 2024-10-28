@@ -16,12 +16,12 @@ import axios from 'axios';
 type ChatPopupProps = {
   onClose?: () => void;
   inforAgent?: {
-    _id: Object;
+    id: string;
     name: string;
     description: string;
     introMessage: string;
     avatar: string;
-    messenge_template: {
+    suggestedActions: {
       title: string;
       description: string;
       content: string;
@@ -87,7 +87,7 @@ const ChatPopup: FC<ChatPopupProps> = ({ visible = false, onClose, inforAgent, r
     const content = contentEditableRef.current?.innerHTML || '';
 
     if (content) {
-      router.push(`/chat?prompt=${content}&agentId=${inforAgent?._id.toString()}`);
+      router.push(`/chat?prompt=${content}&agentId=${inforAgent?.id}`);
       clearContent();
     }
   };
@@ -166,10 +166,10 @@ const ChatPopup: FC<ChatPopupProps> = ({ visible = false, onClose, inforAgent, r
 
             <Carousel opts={{ align: 'start', loop: true }} className={classNames('w-full')}>
               <CarouselContent>
-                {inforAgent?.messenge_template &&
-                  inforAgent?.messenge_template.map((item, index) => (
+                {inforAgent?.suggestedActions &&
+                  inforAgent?.suggestedActions.map((item, index) => (
                     <CarouselItem key={index} className="basis-1/2 md:basis-1/3">
-                      <RecentChatItem item={item} agentId={inforAgent._id.toString()} />
+                      <RecentChatItem item={item} agentId={inforAgent.id} />
                     </CarouselItem>
                   ))}
               </CarouselContent>
