@@ -68,7 +68,8 @@ const DashboardWidget: FC<DashboardWidgetProps> = ({ className, session }) => {
           content: `create label view total transactions for ${userId}`
         }
       ],
-      createdAt: Date.now()
+      createdAt: Date.now(),
+      address: session?.user?.username
     };
 
     await createAgentAPI(defaultAgent as any);
