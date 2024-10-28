@@ -3,10 +3,11 @@ import { z } from 'zod';
 
 import { customModel } from '@/ai';
 import { auth } from '@/app/(auth)/auth';
-import { deleteChatById, getChatById, saveChat } from '@/db/queries';
+import { deleteChatById, getChatById, saveChat , getTools} from '@/db/queries';
 import { Agent } from '@/db/schema';
 
 import { Model, models } from '@/lib/model';
+import { Tool } from '@langchain/core/tools';
 
 export async function POST(request: Request) {
   const {
@@ -14,11 +15,13 @@ export async function POST(request: Request) {
     messages,
     model,
     agent,
+    tools
   }: {
     id: string;
     messages: Array<Message>;
     model: Model['name'];
     agent: Agent;
+    tools:Tool[];
   } = await request.json();
 
   const session = await auth();
@@ -30,9 +33,9 @@ export async function POST(request: Request) {
   if (!models.find((m) => m.name === model)) {
     return new Response('Model not found', { status: 404 });
   }
-
+  console.log(tools);
   const coreMessages = convertToCoreMessages(messages);
-
+ 
   const result = await streamText({
     model: customModel(model),
     system: `Your name is ${agent.name} \n\n

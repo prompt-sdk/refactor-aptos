@@ -173,7 +173,7 @@ export async function getTool(id: string): Promise<Array<Tool>> {
 }
 export async function getTools(ids: any[]): Promise<Array<Tool>> {
   try {
-    return await db.select().from(tool).where(inArray(tool.userId, ids));
+    return await db.select().from(tool).where(inArray(tool.id, ids));
   } catch (error) {
     console.error('Failed to get user from database');
     throw error;

@@ -1,5 +1,5 @@
 import { cookies } from 'next/headers';
-import { createAgent, getAgentById, getUser } from '@/db/queries';
+import { createAgent, getAgentById, getTools, getUser } from '@/db/queries';
 import { Agent } from '@/db/schema';
 
 import { Chat } from '@/components/custom/chat';
@@ -27,6 +27,7 @@ export default async function Page(props: { searchParams: Promise<any> }) {
   if (!agent) {
     return notFound()
   }
+  const tools = await getTools(agent.tool as any);
   const cookieStore = await cookies();
   const value = cookieStore.get('model')?.value;
   const selectedModelName =
@@ -39,6 +40,7 @@ export default async function Page(props: { searchParams: Promise<any> }) {
       id={id}
       initialMessages={[]}
       selectedModelName={selectedModelName}
+      tools={tools}
       agent={agent}
     />
   );

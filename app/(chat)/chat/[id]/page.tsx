@@ -4,7 +4,7 @@ import { notFound } from 'next/navigation';
 
 import { auth } from '@/app/(auth)/auth';
 import { Chat as PreviewChat } from '@/components/custom/chat';
-import { getAgentById, getChatById } from '@/db/queries';
+import { getAgentById, getChatById, getTools } from '@/db/queries';
 import { Chat, user } from '@/db/schema';
 import { DEFAULT_MODEL_NAME, models } from '@/lib/model';
 import { convertToUIMessages } from '@/lib/utils';
@@ -37,6 +37,7 @@ export default async function Page(props: { params: Promise<any> }) {
   const value = cookieStore.get('model')?.value;
   const selectedModelName =
     models.find((m) => m.name === value)?.name || DEFAULT_MODEL_NAME;
+  const tools = await getTools(agentFromDb.tool as any);
 
   return (
     <PreviewChat
@@ -45,6 +46,7 @@ export default async function Page(props: { params: Promise<any> }) {
       initialMessages={chat.messages}
       selectedModelName={selectedModelName}
       agent={agentFromDb}
+      tools={tools}
     />
   );
 }
