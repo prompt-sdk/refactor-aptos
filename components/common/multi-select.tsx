@@ -29,9 +29,9 @@ const MultiSelectTools: React.FC<IMultiSelectToolsProps> = ({
   };
 
   const getToolNameById = (toolId: string) => {
-    const tool = tools.find(t => t._id === toolId);
+    const tool = tools.find(t => t.id === toolId);
 
-    return tool ? tool.name : '';
+    return tool ? tool.name : null;
   };
 
   return (
@@ -80,10 +80,10 @@ const MultiSelectTools: React.FC<IMultiSelectToolsProps> = ({
             ) : (
               tools.map(tool => (
                 <div
-                  key={tool._id}
-                  className={`cursor-pointer p-2 py-3 hover:bg-[#383C41] ${selectedTools.includes(tool._id) ? 'bg-[#383C41]' : ''
+                  key={tool.id}
+                  className={`cursor-pointer p-2 py-3 hover:bg-[#383C41] ${selectedTools.includes(tool.id) ? 'bg-[#383C41]' : ''
                     }`}
-                  onClick={() => toggleTool(tool._id)}
+                  onClick={() => toggleTool(tool.id)}
                 >
                   <div className="flex flex-col">
                     <span className="text-white">{tool.name}</span>

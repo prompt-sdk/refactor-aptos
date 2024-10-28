@@ -101,7 +101,7 @@ export async function getChatById({ id }: { id: string }) {
 
 export async function getAgent(id: string): Promise<Array<Agent>> {
   try {
-    return await db.select().from(agent).where(eq(agent.id, id));
+    return await db.select().from(agent).where(eq(agent.userId, id));
   } catch (error) {
     console.error('Failed to get user from database');
     throw error;
@@ -137,7 +137,7 @@ export async function createAgent({
 
 export async function getTool(id: string): Promise<Array<Tool>> {
   try {
-    return await db.select().from(tool).where(eq(tool.id, id));
+    return await db.select().from(tool).where(eq(tool.userId, id));
   } catch (error) {
     console.error('Failed to get user from database');
     throw error;
@@ -145,7 +145,7 @@ export async function getTool(id: string): Promise<Array<Tool>> {
 }
 export async function getTools(ids: any[]): Promise<Array<Tool>> {
   try {
-    return await db.select().from(tool).where(inArray(tool.id, ids));
+    return await db.select().from(tool).where(inArray(tool.userId, ids));
   } catch (error) {
     console.error('Failed to get user from database');
     throw error;
@@ -181,6 +181,7 @@ export async function createContractTool({
   params,
   typeFunction,
   functions,
+  type_params,
   userId,
 }: Tool) {
   try {
@@ -191,6 +192,7 @@ export async function createContractTool({
       params,
       typeFunction,
       functions,
+      type_params,
       userId,
     });
   } catch (error) {

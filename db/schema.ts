@@ -28,7 +28,7 @@ export const chat = pgTable('Chat', {
 
 export const tool = pgTable('Tool', {
   id: uuid('id').primaryKey().notNull().defaultRandom(),
-  createdAt: timestamp('createdAt').defaultNow(),
+  createdAt: timestamp('createdAt').notNull().defaultNow(),
   name: text('name').notNull(),
   typeName: varchar('typeName', { length: 64 }).notNull(),
   description: text('description'),

@@ -23,7 +23,7 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    return NextResponse.json(agents[0]);
+    return NextResponse.json(agents);
   } catch (error) {
     console.error('Error fetching agent:', error);
     return NextResponse.json(
@@ -37,7 +37,6 @@ export async function POST(request: NextRequest) {
   try {
     const agentData: Agent = await request.json();
 
-    // Validate required fields
     const requiredFields = ['name', 'description', 'userId'];
     for (const field of requiredFields) {
       if (!agentData[field as keyof Agent]) {
