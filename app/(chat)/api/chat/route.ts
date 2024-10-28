@@ -55,14 +55,15 @@ export async function POST(request: Request) {
   if (!models.find((m) => m.name === model)) {
     return new Response('Model not found', { status: 404 });
   }
-  console.log(tools);
-  const toolData = tools.reduce((tool: any, item: any) => {
+
+  let toolData: Tool[];
+  toolData = tools.reduce((tool: any, item: any) => {
     if (item.typeName == 'contractTool') {
-      const filteredObj = Object.keys(item.tool.params).reduce(
+      const filteredObj = Object.keys(item.params).reduce(
         (acc: any, key: any) => {
           acc[key] = key = zodExtract(
-            item.tool.params[key].type,
-            item.tool.params[key].description
+            item.params[key].type,
+            item.params[key].description
           );
           return acc;
         },
@@ -74,33 +75,46 @@ export async function POST(request: Request) {
         )
       );
       type ParametersData = z.infer<typeof ParametersSchema>;
-      //if enty
 
       tool[item.typeName + '_' + generateId()] = {
-        description: item.tool.description,
+        description: item.description,
         parameters: z.object(ParametersSchema),
         execute: async (ParametersData: ParametersData) => {
-          const data = {
-            functionArguments: Object.values(ParametersData).map((item: any) =>
+          const filteredObj = Object.entries(ParametersData)
+            .filter(([key, value]) => key !== 'CoinType')
+            .reduce((acc, [key, value]) => ({ ...acc, [key]: value }), {});
+
+          const filteredObjCointype = Object.keys(ParametersData)
+            .filter((key) => key === 'CoinType')
+            .reduce((acc, key) => ({ ...acc, [key]: ParametersData[key] }), {});
+
+          const data: any = {
+            functionArguments: Object.values(filteredObj).map((item: any) =>
               typeof item === 'number' ? BigInt(item * 10 ** 18) : item
             ),
             function: item.name,
-            typeArguments: item.tool.generic_type_params,
+            typeArguments: Object.values(filteredObjCointype),
           };
-          if (item.typeFunction == 'entry') {
+          console.log('item', item);
+          if (tool.typeFunction == 'entry') {
+            console.log('2');
             return data;
           }
-          if (item.typeFunction == 'view') {
-            const res = await aptosClient.view({ payload: data });
+          if (tool.typeFunction == 'view') {
+            console.log('3');
+            const [res] = await aptosClient.view({ payload: data });
 
-            return res;
+            // should use text generation
+            return `balance is : ${res}`;
           }
+          return 'dont know';
         },
       };
       //if view return data
       return tool;
     }
-  });
+  }, []);
+
   const coreMessages = convertToCoreMessages(messages);
 
   const result = await streamText({
@@ -110,7 +124,7 @@ export async function POST(request: Request) {
       ${agent.prompt}`,
     messages: coreMessages,
     maxSteps: 5,
-    tools: toolData,
+    tools: toolData as any,
     onFinish: async ({ responseMessages }) => {
       if (session.user && session.user.id) {
         try {
