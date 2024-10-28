@@ -75,7 +75,7 @@ export async function POST(request: Request) {
         )
       );
       type ParametersData = z.infer<typeof ParametersSchema>;
-
+      //https://www.youtube.com/watch?v=ZmPGr1WHS_s
       tool[item.typeName + '_' + generateId()] = {
         description: item.description,
         parameters: z.object(ParametersSchema),
@@ -95,17 +95,22 @@ export async function POST(request: Request) {
             function: item.name,
             typeArguments: Object.values(filteredObjCointype),
           };
-          console.log('item', item);
-          if (tool.typeFunction == 'entry') {
-            console.log('2');
-            return data;
+          if (item.typeFunction == 'entry') {
+            return JSON.stringify(data);
           }
-          if (tool.typeFunction == 'view') {
-            console.log('3');
-            const [res] = await aptosClient.view({ payload: data });
+          if (item.typeFunction == 'view') {
+            // add try catch
+            console.log(data);
+            try {
+              const [res] = await aptosClient.view({ payload: data });
+              console.log(res);
+              return `${JSON.stringify(res)}`;
+            } catch (error) {
+              console.log(error);
+              return JSON.stringify(error);
+            }
 
             // should use text generation
-            return `balance is : ${res}`;
           }
           return 'dont know';
         },
