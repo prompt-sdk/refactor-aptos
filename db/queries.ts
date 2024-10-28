@@ -38,10 +38,12 @@ export async function saveChat({
   id,
   messages,
   userId,
+  agentId,
 }: {
   id: string;
   messages: any;
   userId: string;
+  agentId: string;
 }) {
   try {
     const selectedChats = await db.select().from(chat).where(eq(chat.id, id));
@@ -60,6 +62,7 @@ export async function saveChat({
       createdAt: new Date(),
       messages: JSON.stringify(messages),
       userId,
+      agentId,
     });
   } catch (error) {
     console.error('Failed to save chat in database');
@@ -99,15 +102,26 @@ export async function getChatById({ id }: { id: string }) {
   }
 }
 
-export async function getAgent(id: string): Promise<Array<Agent>> {
+export async function getAgentByUserId(userId: string): Promise<Array<Agent>> {
   try {
-    return await db.select().from(agent).where(eq(agent.userId, id));
+    return await db.select().from(agent).where(eq(agent.userId, userId));
   } catch (error) {
     console.error('Failed to get user from database');
     throw error;
   }
 }
-
+export async function getAgentById(id: string) {
+  try {
+    const [selectedAgent] = await db
+      .select()
+      .from(agent)
+      .where(eq(agent.id, id));
+    return selectedAgent;
+  } catch (error) {
+    console.error('Failed to get user from database');
+    throw error;
+  }
+}
 export async function createAgent({
   name,
   description,
@@ -119,16 +133,30 @@ export async function createAgent({
   prompt,
 }: Agent) {
   try {
-    return await db.insert(agent).values({
-      name,
-      description,
-      suggestedActions,
-      tool,
-      prompt,
-      avatar,
-      intro,
-      userId,
-    });
+    return await db
+      .insert(agent)
+      .values({
+        name,
+        description,
+        suggestedActions,
+        tool,
+        prompt,
+        avatar,
+        intro,
+        userId,
+      })
+      .returning({
+        id: agent.id,
+        name: agent.name,
+        description: agent.description,
+        suggestedActions: agent.suggestedActions,
+        tool: agent.tool,
+        prompt: agent.prompt,
+        avatar: agent.avatar,
+        intro: agent.intro,
+        userId: agent.userId,
+        createdAt: agent.createdAt,
+      });
   } catch (error) {
     console.error('Failed to create user in database');
     throw error;

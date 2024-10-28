@@ -19,12 +19,14 @@ import '@/components/augmented/style.css';
 
 export const Message = ({
   sender,
+  username,
   role,
   content,
   toolInvocations,
   attachments,
 }: {
   sender: string;
+  username: string;
   role: string;
   content: string | ReactNode;
   toolInvocations: Array<ToolInvocation> | undefined;
@@ -76,7 +78,7 @@ export const Message = ({
               )}
             >
               <div className={classNames('grow font-bold', role === 'user' ? '' : 'text-cyan-500')}>
-                {role === 'user' ? sliceAddress(sender) : sender}
+                {role === 'user' ? sliceAddress(username) : sliceAddress(sender)}
               </div>
               <button className="shrink-0" onClick={toggleCollapse}>
                 <Image

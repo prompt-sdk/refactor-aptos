@@ -53,7 +53,10 @@ export function SidebarUserNav({ user }: { user: User }) {
               <button
                 className="w-full "
                 onClick={async () => {
-                  await disconnect()
+                  if(connected){
+                    await disconnect();
+                  }
+                  
                   await signOut({
                     redirectTo: '/',
                   });

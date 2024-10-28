@@ -8,6 +8,7 @@ import { ChatHeader } from '@/components/custom/chat-header';
 import { Message as PreviewMessage } from '@/components/custom/message';
 import { useScrollToBottom } from '@/components/custom/use-scroll-to-bottom';
 import { Model } from '@/lib/model';
+import { Agent, user } from '@/db/schema';
 
 import { MultimodalInput } from './multimodal-input';
 import { Overview } from './overview';
@@ -16,14 +17,18 @@ export function Chat({
   id,
   initialMessages,
   selectedModelName,
+  agent,
+  username
 }: {
   id: string;
   initialMessages: Array<Message>;
   selectedModelName: Model['name'];
+  agent: Agent;
+  username: string;
 }) {
   const { messages, handleSubmit, input, setInput, append, isLoading, stop } =
     useChat({
-      body: { id, model: selectedModelName },
+      body: { id, model: selectedModelName, agent },
       initialMessages,
       onFinish: () => {
         window.history.replaceState({}, '', `/chat/${id}`);
@@ -46,7 +51,8 @@ export function Chat({
 
         {messages.map((message) => (
           <PreviewMessage
-            sender={message.role}
+            username={username}
+            sender={agent.name}
             key={message.id}
             role={message.role}
             content={message.content}

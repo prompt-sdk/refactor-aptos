@@ -4,6 +4,8 @@ import { z } from 'zod';
 import { customModel } from '@/ai';
 import { auth } from '@/app/(auth)/auth';
 import { deleteChatById, getChatById, saveChat } from '@/db/queries';
+import { Agent } from '@/db/schema';
+
 import { Model, models } from '@/lib/model';
 
 export async function POST(request: Request) {
@@ -11,8 +13,13 @@ export async function POST(request: Request) {
     id,
     messages,
     model,
-  }: { id: string; messages: Array<Message>; model: Model['name'] } =
-    await request.json();
+    agent,
+  }: {
+    id: string;
+    messages: Array<Message>;
+    model: Model['name'];
+    agent: Agent;
+  } = await request.json();
 
   const session = await auth();
 
@@ -28,8 +35,9 @@ export async function POST(request: Request) {
 
   const result = await streamText({
     model: customModel(model),
-    system:
-      'you are a friendly assistant! keep your responses concise and helpful.',
+    system: `Your name is ${agent.name} \n\n
+       Your desciption is ${agent.description} \n\n
+      ${agent.prompt}`,
     messages: coreMessages,
     maxSteps: 5,
     tools: {
@@ -56,6 +64,7 @@ export async function POST(request: Request) {
             id,
             messages: [...coreMessages, ...responseMessages],
             userId: session.user.id,
+            agentId: agent.id
           });
         } catch (error) {
           console.error('Failed to save chat');

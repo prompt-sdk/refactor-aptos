@@ -24,6 +24,9 @@ export const chat = pgTable('Chat', {
   userId: uuid('userId')
     .notNull()
     .references(() => user.id),
+  agentId: uuid('agentId')
+    .notNull()
+    .references(() => agent.id),
 });
 
 export const tool = pgTable('Tool', {

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getAgent, createAgent } from '@/db/queries';
+import { getAgentByUserId, createAgent } from '@/db/queries';
 import { Agent } from '@/db/schema';
 
 export async function GET(request: NextRequest) {
@@ -14,13 +14,10 @@ export async function GET(request: NextRequest) {
   }
 
   try {
-    const agents = await getAgent(id);
+    const agents = await getAgentByUserId(id);
 
     if (agents.length === 0) {
-      return NextResponse.json(
-        { error: 'Agent not found' },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: 'Agent not found' }, { status: 404 });
     }
 
     return NextResponse.json(agents);
@@ -60,5 +57,4 @@ export async function POST(request: NextRequest) {
       { status: 500 }
     );
   }
-
 }

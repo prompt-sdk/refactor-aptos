@@ -57,7 +57,7 @@ export function WalletSelector() {
     } else if (state.status === "success") {
       router.refresh();
     }
-  }, [state.status, router, toast]);
+  }, [state, router, toast]);
 
 
   const handleConnect = useCallback(async () => {

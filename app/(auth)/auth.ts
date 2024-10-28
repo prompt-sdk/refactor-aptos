@@ -1,13 +1,13 @@
-import { compare } from "bcrypt-ts";
-import NextAuth, { User, Session } from "next-auth";
-import Credentials from "next-auth/providers/credentials";
+import { compare } from 'bcrypt-ts';
+import NextAuth, { User, Session } from 'next-auth';
+import Credentials from 'next-auth/providers/credentials';
 
-import { getUser } from "@/db/queries";
+import { getUser } from '@/db/queries';
 
-import { authConfig } from "./auth.config";
+import { authConfig } from './auth.config';
 
 interface ExtendedSession extends Session {
-  user: User;
+  user: any;
 }
 
 export const {
@@ -29,9 +29,10 @@ export const {
     }),
   ],
   callbacks: {
-    async jwt({ token, user }) {
+    async jwt({ token, user }: any) {
       if (user) {
         token.id = user.id;
+        token.username = user.username;
       }
 
       return token;
@@ -45,6 +46,7 @@ export const {
     }) {
       if (session.user) {
         session.user.id = token.id as string;
+        session.user.username = token.username as string;
       }
 
       return session;
