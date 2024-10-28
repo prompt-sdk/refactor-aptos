@@ -6,7 +6,7 @@ import { FC, useEffect, useRef } from 'react';
 
 import { ComponentBaseProps } from '@/components/common/interface/component.interface';
 import '../style.scss';
-import { Dialog, DialogContent, DialogHeader } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader , DialogTitle} from '@/components/ui/dialog';
 import ButtonClose from '@/public/assets/svgs/popup-close.svg';
 
 type AugmentedPopupProps = ComponentBaseProps & {
@@ -18,6 +18,7 @@ type AugmentedPopupProps = ComponentBaseProps & {
 const AugmentedPopup: FC<AugmentedPopupProps> = ({ children, visible = false, onClose, textHeading, className }) => {
   return (
     <Dialog modal={true} open={visible}>
+      <DialogTitle className="DialogTitle"></DialogTitle>
       <DialogContent
         autoFocus={false}
         data-augmented-ui
