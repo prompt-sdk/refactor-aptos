@@ -15,15 +15,14 @@ import ProfileBottomFrameBorder from '@/public/assets/svgs/profile-bottom-frame-
 import DashboardAgentList from './dashboard-agent-list';
 import DashboardBottomProfileDecor from './dashboard-bottom-profile-decor';
 import DashboardNotesBoard from './dashboard-note-board';
+import { User } from '@/db/schema';
 
 type DashboardWidgetProps = {
-  session: any | null;
+  user: User | null;
   className?: string
 };
 
-const DashboardWidget: FC<DashboardWidgetProps> = ({ className, session }) => {
-
-  const userId = session?.user?.id
+const DashboardWidget: FC<DashboardWidgetProps> = ({ className, user }) => {
   const [agents, setAgents] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isOpenModal, setIsOpenModal] = useState(false);
@@ -42,14 +41,14 @@ const DashboardWidget: FC<DashboardWidgetProps> = ({ className, session }) => {
       description: 'This is a staking agent.',
       intro: 'Hello! I am your staking agent.',
       tool: [toolIds, widgetIds],
-      prompt: `create button action stake 0.1 aptos to ${userId}`,
-      userId: userId,
+      prompt: `create button action stake 0.1 aptos to ${user?.id}`,
+      userId: user?.id,
       avatar: '/assets/images/avatar/logo_aptos.png',
       suggestedActions: [
         {
           title: 'Stake APT',
           description: 'Stake 0.1 APT',
-          content: `create button action stake 0.1 aptos to ${userId}`
+          content: `create button action stake 0.1 aptos to ${user?.id}`
         },
         {
           title: 'Transfer APT',
@@ -59,16 +58,16 @@ const DashboardWidget: FC<DashboardWidgetProps> = ({ className, session }) => {
         {
           title: 'View Balance',
           description: 'View my balance.',
-          content: `create label view balance for ${userId}`
+          content: `create label view balance for ${user?.id}`
         },
         {
           title: 'View Transactions',
           description: 'View my transaction history.',
-          content: `create label view total transactions for ${userId}`
+          content: `create label view total transactions for ${user?.id}`
         }
       ],
       createdAt: Date.now(),
-      address: session?.user?.username
+      address: user?.username
     };
 
     await createAgentAPI(defaultAgent as any);
@@ -78,7 +77,7 @@ const DashboardWidget: FC<DashboardWidgetProps> = ({ className, session }) => {
   const fetchTools = useCallback(async () => {
     setIsLoadingTools(true);
     try {
-      const userId = session?.user?.id;
+      const userId = user?.id;
       const response = await axios.get(`/api/tools?id=${userId}`);
       if (response) {
         const contractTools = response.data.filter((tool: any) => tool.type === 'contractTool');
@@ -122,8 +121,8 @@ const DashboardWidget: FC<DashboardWidgetProps> = ({ className, session }) => {
     setIsLoading(true);
 
     try {
-      if (userId) {
-        const response = await axios.get(`/api/agents?userId=${userId}`);
+      if (user?.id) {
+        const response = await axios.get(`/api/agents?userId=${user?.id}`);
         const fetchedAgents = response.data;
         console.log('fetchedAgents', fetchedAgents);
         setAgents(fetchedAgents);
@@ -137,7 +136,7 @@ const DashboardWidget: FC<DashboardWidgetProps> = ({ className, session }) => {
 
   useEffect(() => {
     fetchAgents();
-  }, [fetchAgents]);
+  }, [user]);
 
   const uploadDataToApi = async (data: any) => {
     try {
@@ -170,7 +169,7 @@ const DashboardWidget: FC<DashboardWidgetProps> = ({ className, session }) => {
       typeFunction: 'entry',
       functions: 'add_stake',
       address: '0x1',
-      userId: userId
+      userId: user?.id
     };
 
     //console.log('Tool data:', toolData);
@@ -196,22 +195,22 @@ const DashboardWidget: FC<DashboardWidgetProps> = ({ className, session }) => {
 
   const saveWidget = useCallback(async () => {
     setIsLoadingWidget(true);
-    if (userId) {
+    if (user?.id) {
       try {
         const widgetData = {
           id: crypto.randomUUID(),
           typeName: 'widgetTool',
-          description: `create button action stake 0.1 aptos to ${userId}`,
+          description: `create button action stake 0.1 aptos to ${user?.id}`,
           prompt: 'create button action stake 0.1 aptos to 0x123123',
           code: `(props) => {
               return (
-                  <a href={'/chat?prompt=stake 0.1 aptos to ${userId} widgetId=' + props.widgetId} className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">
-                      stake 0.1 aptos to ${userId}
+                  <a href={'/chat?prompt=stake 0.1 aptos to ${user?.id} widgetId=' + props.widgetId} className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">
+                      stake 0.1 aptos to ${user?.id}
                   </a>
               )
           }`,
           toolWidget: [toolIds],
-          userId: userId,
+          userId: user?.id,
           name: 'Widget Stake'
         };
         try {

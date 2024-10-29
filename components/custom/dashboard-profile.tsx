@@ -5,7 +5,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import axios from 'axios';
 import classNames from 'classnames';
-import { Copy, LogOut, SettingsIcon, User, Share2 } from 'lucide-react';
+import { Copy, LogOut, SettingsIcon, User as UserUI, Share2 } from 'lucide-react';
 import CustomButton from '@/components/custom/custom-button';
 
 import BoderImage from '@/components/common/border-image';
@@ -37,10 +37,11 @@ import {
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu';
 import { getAptosBalance } from '@/components/utils/aptos-client';
+import { User } from '@/db/schema';
 
 
 
-const DashboardProfile = ({ session }: { session: any | null }) => {
+const DashboardProfile = ({ user }: { user: User | null }) => {
   const [balance, setBalance] = useState<string | null>(null);
   const [isOpenSend, setIsOpenSend] = useState<boolean>(false);
   const [amount, setAmount] = useState<string | null>(null);
@@ -62,8 +63,10 @@ const DashboardProfile = ({ session }: { session: any | null }) => {
   }, [account]);
 
   useEffect(() => {
-    loadBalance();
-  }, [loadBalance, account]);
+    if (account) {
+      loadBalance();
+    }
+  }, [account]);
 
   const toggleOpenSend = () => {
     setIsOpenSend(!isOpenSend);
@@ -209,7 +212,7 @@ const DashboardProfile = ({ session }: { session: any | null }) => {
                   rel="noopener noreferrer"
                   className="flex gap-2"
                 >
-                  <User className="h-4 w-4" /> Profile
+                  <UserUI className="h-4 w-4" /> Profile
                 </Link>
               </DropdownMenuItem>
               <DropdownMenuItem onSelect={copyProfileLink} className="gap-2">
@@ -218,7 +221,7 @@ const DashboardProfile = ({ session }: { session: any | null }) => {
               {wallet && isAptosConnectWallet(wallet) && (
                 <DropdownMenuItem asChild>
                   <a href={APTOS_CONNECT_ACCOUNT_URL} target="_blank" rel="noopener noreferrer" className="flex gap-2">
-                    <User className="h-4 w-4" /> Account
+                    <UserUI className="h-4 w-4" /> Account
                   </a>
                 </DropdownMenuItem>
               )}
