@@ -1,36 +1,31 @@
 import { convertToCoreMessages, Message, streamText, generateId } from 'ai';
-import { z } from 'zod';
+import { z, ZodObject } from 'zod';
 import { getAptosClient } from '@/components/utils/utils';
 import { customModel } from '@/ai';
 import { auth } from '@/app/(auth)/auth';
-import { deleteChatById, getChatById, saveChat, getTools } from '@/db/queries';
+import { deleteChatById, getChatById, saveChat } from '@/db/queries';
 import { Agent } from '@/db/schema';
 
 import { Model, models } from '@/lib/model';
-import { Tool } from '@langchain/core/tools';
+import {
+  zodExtract,
+  parseRequestBody,
+  makeRequest,
+} from '@/components/utils/utils';
 
 export const aptosClient = getAptosClient();
 
-export const zodExtract = (type: any, describe: any) => {
-  if (type == 'u128') return z.number().describe(describe);
-  if (type == 'u64') return z.number().describe(describe);
-  if (type == 'u8') return z.number().describe(describe);
-  if (type == 'bool') return z.boolean().describe(describe);
-  if (type == 'address') return z.string().describe(describe);
-  if (type == 'vector<u8>') return z.string().describe(describe);
-  if (type == 'vector<address>') return z.array(z.string()).describe(describe);
-  if (type == 'vector<string::String>')
-    return z.array(z.string()).describe(describe);
-  if (type == '0x1::string::String')
-    return z.array(z.string()).describe(describe);
-  if (type == 'generic')
-    return z.string().describe(' address type like 0x1::ABC::XYZ');
-  if (type == 'Type')
-    return z.string().describe(' address type like 0x1::ABC::XYZ');
-  if (type == 'TypeInfo')
-    return z.string().describe(' address type like 0x1::ABC::XYZ');
-  return z.string().describe(describe);
-};
+type ParametersData = Record<string, any>; // Define the shape of ParametersData based on your requirements
+
+// Schema for the `tool` object entries
+interface ToolEntry {
+  description: string;
+  parameters: ZodObject<any>; // This can be refined to match `ParametersSchema` type
+  execute: (ParametersData: ParametersData) => Promise<string>;
+}
+type ToolKey = `${string}_${string}_${string}`;
+type Tool = Record<ToolKey, ToolEntry>;
+
 export async function POST(request: Request) {
   const {
     id,
@@ -56,7 +51,7 @@ export async function POST(request: Request) {
     return new Response('Model not found', { status: 404 });
   }
 
-  let toolData: Tool[];
+  let toolData: Tool = {};
   toolData = tools.reduce((tool: any, item: any) => {
     if (item.typeName == 'contractTool') {
       const filteredObj = Object.keys(item.params).reduce(
@@ -74,9 +69,15 @@ export async function POST(request: Request) {
           ([key, value]) => value !== undefined
         )
       );
-      type ParametersData = z.infer<typeof ParametersSchema>;
-      //https://www.youtube.com/watch?v=ZmPGr1WHS_s
-      tool[item.typeName + '_' + generateId()] = {
+
+      // tool[item.typeName + '_' + generateId()] = {
+      //   description: 'Get aptos address',
+      //   parameters: z.object({}),
+      //   execute: async () => {
+      //     return 'aptos address : 0x1::aptos_coin::AptosCoin';
+      //   },
+      // };
+      tool[item.typeName + '_' + item.typeFunction + '_' + generateId()] = {
         description: item.description,
         parameters: z.object(ParametersSchema),
         execute: async (ParametersData: ParametersData) => {
@@ -100,9 +101,8 @@ export async function POST(request: Request) {
           }
           if (item.typeFunction == 'view') {
             // add try catch
-            console.log(data);
             try {
-              const [res] = await aptosClient.view({ payload: data });
+              const res = await aptosClient.view({ payload: data });
               console.log(res);
               return `${JSON.stringify(res)}`;
             } catch (error) {
@@ -117,6 +117,46 @@ export async function POST(request: Request) {
       };
       //if view return data
       return tool;
+    }
+    if (item.typeName == 'widgetTool') {
+      tool[item.typeName + '_' + item.typeFunction + '_' + generateId()] = {
+        description: item.description,
+        parameters: z.object({}),
+        execute: async ({}) => {
+          return item.code;
+        },
+      };
+    }
+    if (item.typeName == 'apiTool') {
+      const spec = JSON.parse(item.spec);
+      const apiHost = spec.servers[0].url;
+      for (const path in spec.paths) {
+        const endpoint = `${apiHost}${path}`;
+        for (const method in spec.paths[path]) {
+          const methodSchema = spec.paths[path][method];
+          const description =
+            methodSchema.summary || 'No description available';
+
+          const { parameters, typeRequest } = parseRequestBody(
+            methodSchema,
+            spec
+          );
+          tool[item.typeName + '_' + path + '_' + generateId()] = {
+            description: description,
+            parameters,
+            execute: async (payload: any) => {
+              const res = await makeRequest(
+                item.accessToken,
+                endpoint,
+                payload,
+                method as any,
+                typeRequest as any
+              );
+              return JSON.stringify(res);
+            },
+          };
+        }
+      }
     }
   }, []);
 

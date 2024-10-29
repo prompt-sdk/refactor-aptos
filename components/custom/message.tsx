@@ -112,8 +112,19 @@ export const Message = ({
                       if (state === 'result') {
                         const { result } = toolInvocation;
 
+                        const [typeTool, typeFunction] = toolName.split("_")
+                        console.log("typeTool", typeTool)
+                        console.log("typeFunction", typeFunction)
                         return (
                           <div key={toolCallId}>
+                            {typeTool == 'contractTool' && typeFunction == 'view' && (
+                              // IF contractTool = typeView
+                              // IF contractTool = type Entry
+                              <div>contractTool Call</div>
+                            )}
+                            {typeTool == 'widgetTool' && (
+                              <div>WidgettTool Call</div>
+                            )}
                             {toolName === 'getWeather' ? (
                               <Weather weatherAtLocation={result} />
                             ) : null}
