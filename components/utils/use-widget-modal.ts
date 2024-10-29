@@ -132,6 +132,7 @@ export const useWidgetModal = create(
     }),
     {
       name: 'widget-storage',
+      //@ts-ignore
       getStorage: () => localStorage
     }
   )

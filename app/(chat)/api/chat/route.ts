@@ -13,7 +13,6 @@ import {
   makeRequest,
 } from '@/components/utils/utils';
 
-export const aptosClient = getAptosClient();
 
 type ParametersData = Record<string, any>; // Define the shape of ParametersData based on your requirements
 
@@ -40,6 +39,7 @@ export async function POST(request: Request) {
     agent: Agent;
     tools: Tool[];
   } = await request.json();
+ const aptosClient = getAptosClient();
 
   const session = await auth();
 
@@ -101,9 +101,10 @@ export async function POST(request: Request) {
           }
           if (item.typeFunction == 'view') {
             // add try catch
+            console.log('data', data);
+            const res = await aptosClient.view({ payload: data });
+            console.log('res', res);
             try {
-              const res = await aptosClient.view({ payload: data });
-              console.log(res);
               return `${JSON.stringify(res)}`;
             } catch (error) {
               console.log(error);
@@ -122,8 +123,8 @@ export async function POST(request: Request) {
       tool[item.typeName + '_' + item.typeFunction + '_' + generateId()] = {
         description: item.description,
         parameters: z.object({}),
-        execute: async ({}) => {
-          return item.code;
+        execute: async (testParams: any) => {
+          return 'item.code';
         },
       };
     }

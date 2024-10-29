@@ -383,7 +383,7 @@ export function Tool({
   }, [form, isValid]);
 
   const handleCreateApiTool = async (data: any) => {
-    try{
+    try {
       const toolData = {
         typeName: 'apiTool',
         name: data.name,
@@ -555,9 +555,9 @@ export function Tool({
                     ? [{ value: '', label: 'Loading packages...' }]
                     : moduleData && moduleData.length > 0
                       ? [
-                          { value: '', label: 'Choose package' },
-                          ...moduleData.map((item: any) => ({ value: item.name, label: item.name }))
-                        ]
+                        { value: '', label: 'Choose package' },
+                        ...moduleData.map((item: any) => ({ value: item.name, label: item.name }))
+                      ]
                       : [{ value: '', label: 'No packages available' }]
                 }
                 onSelect={selectedOption => {
@@ -576,9 +576,9 @@ export function Tool({
                     ? [{ value: '', label: 'Loading modules...' }]
                     : functions && functions.length > 0
                       ? [
-                          { value: '', label: 'Choose module' },
-                          ...functions.map((item: any) => ({ value: item.name, label: item.name }))
-                        ]
+                        { value: '', label: 'Choose module' },
+                        ...functions.map((item: any) => ({ value: item.name, label: item.name }))
+                      ]
                       : [{ value: '', label: 'No modules available' }]
                 }
                 onSelect={selectedOption => {
@@ -712,18 +712,18 @@ export function Tool({
             </div>
             <div>
               <label className="mb-2 block text-sm font-medium text-white">Prompt</label>
-              <Textarea 
-                value={widgetPrompt}  
+              <Textarea
+                value={widgetPrompt}
                 onChange={onchangeWidgetPrompt}
-                className="min-h-[100px] text-sm" 
+                className="min-h-[100px] text-sm"
               />
             </div>
             <div>
               <label className="mb-2 block text-sm font-medium text-white">Code</label>
-              <Textarea 
+              <Textarea
                 value={widgetCode}
                 onChange={onchangeWidgetCode}
-                className="font-mono min-h-[150px] text-sm" 
+                className="font-mono min-h-[150px] text-sm"
               />
             </div>
             {previewWidgetCode && (
