@@ -5,7 +5,7 @@ import { useWallet } from '@aptos-labs/wallet-adapter-react';
 
 import { getAptosClient } from '@/components/utils/utils';
 
-import ProfileBtnFrame from '@public/public/assets/svgs/profile-btn-frame.svg';
+import ProfileBtnFrame from '@/public/assets/svgs/profile-btn-frame.svg';
 import React from 'react';
 
 export const SmartAction = ({ props: data }: { props: any }) => {

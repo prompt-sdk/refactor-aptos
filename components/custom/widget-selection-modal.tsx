@@ -1,3 +1,4 @@
+"use client"
 import { FC, useCallback, useEffect, useState } from 'react';
 
 import BorderImage from '@/components/common/border-image';
@@ -9,6 +10,7 @@ import { useWidgetModal } from '@/components/utils/use-widget-modal';
 
 import WidgetFrame2 from '@/public/assets/svgs/widget-frame-2.svg';
 
+import { User } from '@/db/schema';
 interface WidgetOption {
   _id: string;
   type: string;
@@ -17,18 +19,22 @@ interface WidgetOption {
   icon: string;
 }
 
-export const WidgetSelectionModal: FC<any> = ({ className, session }) => {
+type WidgetSelectionModalProps = {
+  user: User | null;
+  className?: string
+};
+
+export const WidgetSelectionModal: FC<WidgetSelectionModalProps> = ({ className, user }) => {
   const { isOpen, closeWidgetModal, addWidget } = useWidgetModal();
   const [widgetOptions, setWidgetOptions] = useState<WidgetOption[]>([]);
   const [selectedWidget, setSelectedWidget] = useState<string | null>(null);
-  const userId = session?.user?.id;
   const [isLoading, setIsLoading] = useState(false);
 
   const fetchWidgetTools = useCallback(async () => {
     setIsLoading(true);
 
     try {
-      const response = await fetch(`/api/tools?id=${userId}`);
+      const response = await fetch(`/api/tools?id=${user?.id}`);
       if (!response.ok) {
         throw new Error('Failed to fetch tools');
       }
@@ -41,7 +47,7 @@ export const WidgetSelectionModal: FC<any> = ({ className, session }) => {
     } finally {
       setIsLoading(false);
     }
-  }, [userId]);
+  }, [user?.id]);
 
   useEffect(() => {
     fetchWidgetTools();
