@@ -24,8 +24,8 @@ import './globals.css';
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://chat.vercel.ai'),
-  title: 'Prompt - SDK',
-  description: 'Prompt - SDK',
+  title: 'Prompt Wallet - SDK',
+  description: 'Prompt Wallet',
 };
 
 export const viewport = {
