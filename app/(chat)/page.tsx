@@ -1,5 +1,5 @@
 import { cookies } from 'next/headers';
-import { createAgent, getAgentById, getToolById , getTools} from '@/db/queries';
+import { createAgent, getAgentById, getToolById, getTools } from '@/db/queries';
 import { Agent } from '@/db/schema';
 
 import { Chat } from '@/components/custom/chat';
@@ -23,9 +23,11 @@ export default async function Page(props: { searchParams: Promise<any> }) {
   } else {
     if (widgetId) {
       const [widget] = await getToolById(widgetId)
-      console.log(widget)
+
+      AgentDefault.tool = widget.toolWidget
     }
     AgentDefault.userId = session?.user?.id;
+    console.log(AgentDefault);
     [agent] = await createAgent(AgentDefault)
   }
   if (!agent) {
