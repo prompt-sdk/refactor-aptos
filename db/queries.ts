@@ -110,6 +110,16 @@ export async function getAgentByUserId(userId: string): Promise<Array<Agent>> {
     throw error;
   }
 }
+
+export async function getAgentByAddress(address: string): Promise<Array<Agent>> {
+  try {
+    return await db.select().from(agent).where(eq(agent.address, address));
+  } catch (error) {
+    console.error('Failed to get user from database');
+    throw error;
+  }
+}
+
 export async function getAgentById(id: string) {
   try {
     const [selectedAgent] = await db
@@ -131,6 +141,7 @@ export async function createAgent({
   tool,
   userId,
   prompt,
+  address,
 }: Agent) {
   try {
     return await db
@@ -144,6 +155,7 @@ export async function createAgent({
         avatar,
         intro,
         userId,
+        address,
       })
       .returning({
         id: agent.id,
@@ -156,6 +168,7 @@ export async function createAgent({
         intro: agent.intro,
         userId: agent.userId,
         createdAt: agent.createdAt,
+        address: agent.address,
       });
   } catch (error) {
     console.error('Failed to create user in database');
@@ -181,6 +194,7 @@ export async function getTools(ids: any[]): Promise<Array<Tool>> {
 }
 
 export async function createApiTool({
+  id,
   name,
   description,
   typeName,
@@ -190,6 +204,7 @@ export async function createApiTool({
 }: Tool) {
   try {
     return await db.insert(tool).values({
+      id,
       typeName,
       name,
       description,
@@ -203,6 +218,7 @@ export async function createApiTool({
   }
 }
 export async function createContractTool({
+  id,
   name,
   description,
   typeName,
@@ -214,6 +230,7 @@ export async function createContractTool({
 }: Tool) {
   try {
     return await db.insert(tool).values({
+      id,
       name,
       description,
       typeName,
@@ -229,6 +246,7 @@ export async function createContractTool({
   }
 }
 export async function createWidgetTool({
+  id,
   name,
   description,
   typeName,
@@ -239,6 +257,7 @@ export async function createWidgetTool({
 }: Tool) {
   try {
     return await db.insert(tool).values({
+      id,
       name,
       description,
       typeName,

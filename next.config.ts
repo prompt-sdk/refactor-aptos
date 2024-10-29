@@ -21,6 +21,10 @@ const nextConfig: NextConfig = {
     return config;
   },
   transpilePackages: ['@babel/standalone'],
+  env: {
+    NEXT_PUBLIC_APP_URL: process.env.NEXT_PUBLIC_APP_URL,
+    OPENAI_API_KEY: process.env.OPENAI_API_KEY,
+  },
 };
 
 export default nextConfig;

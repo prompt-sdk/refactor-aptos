@@ -18,7 +18,6 @@ import DropdownSelect from '@/components/common/dropdown-select-button';
 
 import WidgetFrame2 from '@/public/assets/svgs/widget-frame-2.svg';
 import useSWR, { mutate } from 'swr';
-import { fetcher } from '@/lib/utils';
 import { Textarea } from '@/components/ui/textarea';
 import MultiSelectTools from '../common/multi-select';
 const COIN_LIST_URL = 'https://raw.githubusercontent.com/AnimeSwap/coin-list/main/aptos/mainnet.js';
@@ -42,9 +41,6 @@ export function Tool({
   // const [isOpenSelectTool, setIsOpenSelectTool] = useState<boolean>(false);
   const [selectedTools, setSelectedTools] = useState<string[]>([]);
 
-  console.log('🚀 ~ setSelectedTools:', setSelectedTools);
-
-  console.log('🚀 ~ selectedTools:', selectedTools);
   const [loadingFunctions, setLoadingFunctions] = useState<Record<string, boolean>>({});
   // const [coinList, setCoinList] = useState<Array<{ symbol: string; name: string; address: string }>>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -399,7 +395,15 @@ export function Tool({
       await uploadDataToApi(toolData);
       mutate(session ? `/api/tools?id=${session.user?.id}` : null);
       handleCloseCreateApiTool();
+      toast({
+        title: 'API Tool created successfully!',
+        description: 'Your API Tool has been created successfully.'
+      });
     } catch (error) {
+      toast({
+        title: 'Error creating API Tool',
+        description: 'Please try again.'
+      });
       console.error('Error creating API Tool:', error);
     }
   };

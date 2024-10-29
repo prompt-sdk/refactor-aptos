@@ -132,7 +132,8 @@ export function Agent({
           ? chatTemplateForm.getValues('templates')
           : [],
         userId: userId,
-        createdAt: Date.now()
+        createdAt: Date.now(),
+        address: session?.user?.username
       };
       //@ts-ignore
       await createAgentAPI(agentData);

@@ -1,7 +1,7 @@
 import classNames from 'classnames';
 import { Metadata } from 'next';
 import { Nunito, Orbitron } from 'next/font/google';
-import { Toaster } from 'sonner';
+import { Toaster } from '@/components/ui/toaster';
 
 import { ThemeProvider } from '@/components/context/theme-provider';
 import { WalletProvider } from '@/components/context/wallet-provider'
@@ -86,7 +86,7 @@ export default async function RootLayout({
             style={{ backgroundImage: `url(${Backdrop.src})` }}
           >
             <WalletProvider>
-              <Toaster position="top-center" />
+              <Toaster />
               {children}
             </WalletProvider>
           </div>
