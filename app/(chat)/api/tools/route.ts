@@ -1,16 +1,16 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getTool, createApiTool, createContractTool, createWidgetTool } from '@/db/queries';
+import { getToolByUserId, createApiTool, createContractTool, createWidgetTool } from '@/db/queries';
 import { Tool } from '@/db/schema';
 
 export async function GET(request: NextRequest) {
-    const id = request.nextUrl.searchParams.get('id');
+    const userId = request.nextUrl.searchParams.get('userId');
 
-    if (!id) {
+    if (!userId) {
         return NextResponse.json({ error: 'Tool ID is required' }, { status: 400 });
     }
 
     try {
-        const tool = await getTool(id);
+        const tool = await getToolByUserId(userId);
         if (tool.length === 0) {
             return NextResponse.json({ error: 'Tool not found' }, { status: 404 });
         }
