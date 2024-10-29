@@ -11,7 +11,7 @@ import { insertNewParagraph } from '../utils/chat-promt-bot.util';
 import DashboardAvatar from '@/components/custom/dashboard-avatar';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import axios from 'axios';
+
 
 type ChatPopupProps = {
   onClose?: () => void;
