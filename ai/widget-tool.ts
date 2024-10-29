@@ -43,7 +43,7 @@ export async function widgetTool({ prompt }: any) {
   
   (props) => {
   return (
-      <a href={'/chat?prompt=action&widgetId='+props.widgetId} className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">
+      <a href={'?prompt=action&widgetId='+props.widgetId} className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">
          action
       </a>
       )
@@ -60,7 +60,7 @@ export async function widgetTool({ prompt }: any) {
   
   (props) => {
   return (
-      <a href={'/chat?prompt="send 0.1 aptos to 0x123456789"&widgetId='+props.widgetId} className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">
+      <a href={'?prompt="send 0.1 aptos to 0x123456789"&widgetId='+props.widgetId} className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">
           Send APTOS
       </a>
       )
@@ -75,7 +75,7 @@ export async function widgetTool({ prompt }: any) {
   
   (props) => {
   return (
-      <a href={'/chat?prompt=Stake 0.1 APTOS  &widgetId='+props.widgetId} className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">
+      <a href={'?prompt=Stake 0.1 APTOS  &widgetId='+props.widgetId} className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">
           Stake
       </a>
   )
@@ -147,11 +147,11 @@ export async function searchTool({ prompt, tool_ids }: any) {
   const dataTools: any = await getTools(tool_ids);
 
   const toolMap = dataTools.map((tool: any) => {
-    const ParametersSchema = Object.keys(tool.tool.params).reduce(
+    const ParametersSchema = Object.keys(tool.params).reduce(
       (acc: any, key: any) => {
         acc[key] = key = zodExtract(
-          tool.tool.params[key].type,
-          tool.tool.params[key].description
+          tool.params[key].type,
+          tool.params[key].description
         );
         return acc;
       },
@@ -160,7 +160,7 @@ export async function searchTool({ prompt, tool_ids }: any) {
     type ParametersData = z.infer<typeof ParametersSchema>;
 
     return new DynamicStructuredTool({
-      name: tool._id.toString(),
+      name: tool.id,
       description: tool.description,
       func: async (ParametersData: ParametersData) => ``,
       schema: z.object(ParametersSchema),

@@ -38,7 +38,7 @@ const RecentChatItem: FC<{ item: { id?: string; title: string; description: stri
 }) => {
   return (
     <Link
-      href={`/chat?prompt=${description}&agentId=${agentId}`}
+      href={`/?prompt=${description}&agentId=${agentId}`}
       data-augmented-ui
       className={classNames(
         'border-none outline-none',
@@ -87,7 +87,7 @@ const ChatPopup: FC<ChatPopupProps> = ({ visible = false, onClose, inforAgent, r
     const content = contentEditableRef.current?.innerHTML || '';
 
     if (content) {
-      router.push(`/chat?prompt=${content}&agentId=${inforAgent?.id}`);
+      router.push(`/?prompt=${content}&agentId=${inforAgent?.id}`);
       clearContent();
     }
   };

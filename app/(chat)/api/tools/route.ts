@@ -4,7 +4,7 @@ import { Tool } from '@/db/schema';
 
 export async function GET(request: NextRequest) {
     const userId = request.nextUrl.searchParams.get('userId');
-
+    console.log("userId",userId)
     if (!userId) {
         return NextResponse.json({ error: 'Tool ID is required' }, { status: 400 });
     }
