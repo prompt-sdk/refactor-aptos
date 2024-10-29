@@ -105,18 +105,13 @@ export const Message = ({
                     <Markdown>{content as string}</Markdown>
                   </div>
                 )}
-
                 {toolInvocations && toolInvocations.length > 0 ? (
                   <div className="flex flex-col gap-4">
                     {toolInvocations.map((toolInvocation) => {
                       const { toolName, toolCallId, state } = toolInvocation;
-
                       if (state === 'result') {
                         const { result } = toolInvocation;
-
                         const [typeTool, typeFunction] = toolName.split("_")
-                        console.log("typeTool", typeTool)
-                        console.log("typeFunction", typeFunction)
                         return (
                           <div key={toolCallId}>
                             {typeTool == 'contractTool' && typeFunction == 'entry' && (

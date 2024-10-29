@@ -98,11 +98,8 @@ export async function POST(request: Request) {
             return JSON.stringify(data);
           }
           if (item.typeFunction == 'view') {
-            
-
             try {
               const res = await aptosClient.view({ payload: data });
-              console.log('res', res);
               return `data: ${JSON.stringify(res)} `;
             } catch (error) {
               console.log(error);

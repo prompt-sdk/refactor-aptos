@@ -1,4 +1,3 @@
-import { cookies } from 'next/headers';
 import { auth } from '@/app/(auth)/auth';
 
 import DashboardProfile from '@/components/custom/dashboard-profile';
