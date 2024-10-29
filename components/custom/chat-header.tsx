@@ -1,4 +1,4 @@
-import { Plus } from 'lucide-react';
+import { Plus, Bot , Settings } from 'lucide-react';
 import Link from 'next/link';
 
 import { ModelSelector } from '@/components/custom/model-selector';
@@ -27,10 +27,35 @@ export function ChatHeader({
           </Link>
         </Button>
       </BetterTooltip>
+      
       <ModelSelector
         selectedModelName={selectedModelName}
         className="order-1 md:order-2"
       />
+      <BetterTooltip content="Agent">
+        <Button
+          variant="ghost"
+          className="w-auto md:size-8 [&>svg]:!size-5 md:[&>svg]:!size-4 pl-2 md:p-0 order-2 md:order-1 ml-auto md:ml-0  group-data-[state=collapsed]/sidebar-wrapper:flex"
+          asChild
+        >
+          <Link href="/agent">
+            <Bot />
+            <span className="md:sr-only">Agent</span>
+          </Link>
+        </Button>
+      </BetterTooltip>
+      <BetterTooltip content="Tool">
+        <Button
+          variant="ghost"
+          className="w-auto md:size-8 [&>svg]:!size-5 md:[&>svg]:!size-4 pl-2 md:p-0 order-2 md:order-1 ml-auto md:ml-0  group-data-[state=collapsed]/sidebar-wrapper:flex"
+          asChild
+        >
+          <Link href="/tool">
+            <Settings />
+            <span className="md:sr-only">Tool</span>
+          </Link>
+        </Button>
+      </BetterTooltip>
     </header>
   );
 }
