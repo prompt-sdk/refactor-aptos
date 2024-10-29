@@ -5,7 +5,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import axios from 'axios';
 import classNames from 'classnames';
-import { Copy, LogOut, SettingsIcon, User } from 'lucide-react';
+import { Copy, LogOut, SettingsIcon } from 'lucide-react';
 import CustomButton from '@/components/custom/custom-button';
 
 import BoderImage from '@/components/common/border-image';
@@ -24,36 +24,38 @@ import {
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu';
 import { getAptosBalance } from '@/components/utils/aptos-client';
-
+import { User } from '@/db/schema';
 
 type ProfileInforProps = {
-  address: string;
+  user: User;
   className?: string
 };
 
-const ProfileInfor: FC<ProfileInforProps> = ({ className, address }) => {
+const ProfileInfor: FC<ProfileInforProps> = ({ className, user }) => {
   const [balance, setBalance] = useState<string | null>(null);
   const { toast } = useToast();
-  //console.log('address', address);
 
   const loadBalance = useCallback(async () => {
     try {
-      const balance = await getAptosBalance(address.toString() ||'');
+      const balance = await getAptosBalance(user.username);
       // console.log('balance', balance);
       setBalance(Number(balance).toFixed(2));
     } catch (error) {
       console.error('Error loading balance:', error);
     }
-  }, [address]); 
+  }, [user]);
 
   useEffect(() => {
-    loadBalance();
-  }, [loadBalance, address]);
+    if (user) {
+      loadBalance();
+    }
+
+  }, [user]);
 
   const copyAddress = useCallback(async () => {
-    if (!address) return;
+
     try {
-      await navigator.clipboard.writeText(address);
+      await navigator.clipboard.writeText(user.username);
       toast({
         title: 'Success',
         description: 'Copied wallet address to clipboard.'
@@ -65,7 +67,7 @@ const ProfileInfor: FC<ProfileInforProps> = ({ className, address }) => {
         description: 'Failed to copy wallet address.'
       });
     }
-  }, [address]);
+  }, [user]);
 
   return (
     <BoderImage className={classNames('relative flex w-full max-w-[483px] justify-center', className)}>
@@ -75,7 +77,7 @@ const ProfileInfor: FC<ProfileInforProps> = ({ className, address }) => {
           <div className="flex grow flex-wrap items-center gap-2 md:flex-nowrap">
             <DashboardAvatar className="shrink-0" imageUrl={'/assets/images/avatar/avatar-1.jpeg'} altText="Avatar" />
             <div className="flex w-full flex-col items-start gap-3">
-              <p className="text-wrap break-words text-xl font-bold">{collapseAddress(address)}</p>
+              <p className="text-wrap break-words text-xl font-bold">{collapseAddress(user.username)}</p>
               <p className="text-sm">Wellcome</p>
             </div>
           </div>

@@ -1,6 +1,6 @@
 'use client';
 import { useForm } from 'react-hook-form';
-import { useState,useCallback,useEffect } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { useToast } from '@/components/ui/use-toast';
 import { ChatHeader } from '@/components/custom/chat-header';
 import { Model } from '@/lib/model';
@@ -12,7 +12,7 @@ import AugmentedPopup from '@/components/augmented/components/augmented-popup';
 import DashboardAvatar from '@/components/common/dashboard-avatar';
 import FormTextField from '@/components/common/form-text-field';
 import MultiSelectTools from '@/components/common/multi-select';
-import { Session } from 'next-auth';
+
 import axios from 'axios';
 import { Textarea } from '@/components/ui/textarea';
 import useSWR, { mutate } from 'swr';
@@ -29,7 +29,7 @@ export function Agent({
   session
 }: {
   selectedModelName: Model['name'];
-  session: Session | null;
+  session: any | null;
 }) {
 
   //const [agents, setAgents] = useState<any[]>([]);
@@ -38,7 +38,7 @@ export function Agent({
   const [avatar, setAvatar] = useState<string>('');
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
-  const [chatTemplates, setChatTemplates] = useState<ChatTemplate[]>([]); 
+  const [chatTemplates, setChatTemplates] = useState<ChatTemplate[]>([]);
 
   const agentForm = useForm({
     defaultValues: {
@@ -59,14 +59,14 @@ export function Agent({
     }
   });
 
-  const { data: toolsData, error,isLoading: isLoadingTools } = useSWR(
+  const { data: toolsData, error, isLoading: isLoadingTools } = useSWR(
     session ? `/api/tools?id=${session.user?.id}` : null,
     async (url) => {
       const response = await axios.get(url);
       return response.data.filter((tool: any) => tool.type !== 'apiTool');
-    },{
-      fallbackData:[]
-    }
+    }, {
+    fallbackData: []
+  }
   );
 
   // console.log('toolsData', toolsData);
@@ -126,7 +126,7 @@ export function Agent({
         name: data.name,
         description: data.description,
         intro: data.introMessage,
-        tool: data.tools ? data.tools:[],
+        tool: data.tools ? data.tools : [],
         prompt: data.prompt,
         suggestedActions: chatTemplateForm.getValues('templates').some(template => template.title.length > 0)
           ? chatTemplateForm.getValues('templates')
@@ -139,7 +139,7 @@ export function Agent({
       await createAgentAPI(agentData);
 
       // Refetch agents after creating a new agent
-      mutate(session ? `/api/agents?id=${session.user?.id}` : null); // Trigger a revalidation
+      mutate(session ? `/api/agents?userId=${userId}` : null); // Trigger a revalidation
 
       setIsOpenCreateAgent(false);
       agentForm.reset();
@@ -175,12 +175,12 @@ export function Agent({
 
   //const [isLoadingAgents, setIsLoadingAgents] = useState(false);
 
-  const { data: agents, error: agentsError,isLoading:isLoadingAgents } = useSWR(
-    session ? `/api/agents?id=${session.user?.id}` : null,fetcher,
+  const { data: agents, error: agentsError, isLoading: isLoadingAgents } = useSWR(
+    session ? `/api/agents?userId=${session.user?.id}` : null, fetcher,
     {
-      fallbackData:[]
+      fallbackData: []
     }
-  );  
+  );
 
   // Function to add a new chat template
   const handleAddChatTemplate = () => {
@@ -235,7 +235,7 @@ export function Agent({
                 {agents.map((agent: any) => (
                   <Link key={agent.id} href={`/?startAgent=${agent.id}`}>
                     <BoderImage
-                      imageBoder={WidgetFrame2.src} 
+                      imageBoder={WidgetFrame2.src}
                       className="flex flex-col items-start justify-between gap-2 rounded-lg border p-4 shadow-sm transition-shadow hover:shadow-md"
                     >
                       <h2 className="text-lg font-semibold">{agent.name}</h2>

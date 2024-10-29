@@ -13,12 +13,13 @@ import DashboardBottomProfileDecor from '@/components/custom/dashboard-bottom-pr
 import DashboardNotesBoard from '@/components/custom/dashboard-note-board';
 import { toast } from '@/components/ui/use-toast';
 import { useRouter } from 'next/navigation';
+import { User } from '@/db/schema';
 type ProfileWidgetProps = {
-  address: string;
+  user: User;
   className?: string
 };
 
-const ProfileWidget: FC<ProfileWidgetProps> = ({ className, address }) => {
+const ProfileWidget: FC<ProfileWidgetProps> = ({ className, user }) => {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [agents, setAgents] = useState<any[]>([]);
@@ -28,8 +29,8 @@ const ProfileWidget: FC<ProfileWidgetProps> = ({ className, address }) => {
   const fetchAgentByUsername = useCallback(async () => {
     setIsLoading(true);
     try {
-      if (address) {
-        const response = await fetch(`/api/agents?address=${address}`);
+      if (user) {
+        const response = await fetch(`/api/agents?userId=${user.id}`);
         if (!response.ok) {
           throw new Error('Failed to fetch agent');
         }
@@ -42,7 +43,7 @@ const ProfileWidget: FC<ProfileWidgetProps> = ({ className, address }) => {
     } finally {
       setIsLoading(false);
     }
-  }, [address]);
+  }, [user]);
 
   useEffect(() => {
     fetchAgentByUsername();
@@ -64,10 +65,10 @@ const ProfileWidget: FC<ProfileWidgetProps> = ({ className, address }) => {
       <div className="w-full">
         <p className="px-8 py-4">Agent Creator ({agents.length})</p>
         <div className="flex flex-col gap-6 px-8 py-6">
-          <DashboardAgentList items={agents} onClick={() => {}} />
+          <DashboardAgentList items={agents} onClick={() => { }} />
         </div>
         <Image src={line.src} alt="line" className="w-full" width={line.width} height={line.height} />
-        <DashboardNotesBoard address={address} />
+        <DashboardNotesBoard address={user.username} />
       </div>
     </BoderImage>
   );

@@ -37,10 +37,10 @@ import {
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu';
 import { getAptosBalance } from '@/components/utils/aptos-client';
-import { Session } from 'next-auth';
 
 
-const DashboardProfile = ({session}:{session: Session|null}) => {
+
+const DashboardProfile = ({ session }: { session: any | null }) => {
   const [balance, setBalance] = useState<string | null>(null);
   const [isOpenSend, setIsOpenSend] = useState<boolean>(false);
   const [amount, setAmount] = useState<string | null>(null);
@@ -53,13 +53,13 @@ const DashboardProfile = ({session}:{session: Session|null}) => {
 
   const loadBalance = useCallback(async () => {
     try {
-      const balance = await getAptosBalance(account?.address.toString() ||'');
+      const balance = await getAptosBalance(account?.address.toString() || '');
       // console.log('balance', balance);
       setBalance(Number(balance).toFixed(2));
     } catch (error) {
       console.error('Error loading balance:', error);
     }
-  }, [account]); 
+  }, [account]);
 
   useEffect(() => {
     loadBalance();
@@ -203,14 +203,14 @@ const DashboardProfile = ({session}:{session: Session|null}) => {
                 <Copy className="h-4 w-4" /> Copy address
               </DropdownMenuItem>
               <DropdownMenuItem asChild>
-                <a
-                  href={`${window.location.origin}/profile/${account?.address.toString()}`}
+                <Link
+                  href={`/profile/${account?.address.toString()}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex gap-2"
                 >
                   <User className="h-4 w-4" /> Profile
-                </a>
+                </Link>
               </DropdownMenuItem>
               <DropdownMenuItem onSelect={copyProfileLink} className="gap-2">
                 <Share2 className="h-4 w-4" /> Share Profile

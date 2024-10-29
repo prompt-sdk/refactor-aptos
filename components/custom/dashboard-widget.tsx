@@ -15,10 +15,9 @@ import ProfileBottomFrameBorder from '@/public/assets/svgs/profile-bottom-frame-
 import DashboardAgentList from './dashboard-agent-list';
 import DashboardBottomProfileDecor from './dashboard-bottom-profile-decor';
 import DashboardNotesBoard from './dashboard-note-board';
-import { Session } from 'next-auth';
 
 type DashboardWidgetProps = {
-  session: Session | null;
+  session: any | null;
   className?: string
 };
 
@@ -42,7 +41,7 @@ const DashboardWidget: FC<DashboardWidgetProps> = ({ className, session }) => {
       name: 'Staking Agent',
       description: 'This is a staking agent.',
       intro: 'Hello! I am your staking agent.',
-      tool: [toolIds,widgetIds],
+      tool: [toolIds, widgetIds],
       prompt: `create button action stake 0.1 aptos to ${userId}`,
       userId: userId,
       avatar: '/assets/images/avatar/logo_aptos.png',
@@ -81,9 +80,11 @@ const DashboardWidget: FC<DashboardWidgetProps> = ({ className, session }) => {
     try {
       const userId = session?.user?.id;
       const response = await axios.get(`/api/tools?id=${userId}`);
-      const contractTools = response.data.filter((tool: any) => tool.type === 'contractTool');
+      if (response) {
+        const contractTools = response.data.filter((tool: any) => tool.type === 'contractTool');
+        setTools(contractTools);
+      }
 
-      setTools(contractTools);
       //console.log('contractTools', contractTools);
     } catch (error) {
       console.error('Error fetching tools:', error);
@@ -122,7 +123,7 @@ const DashboardWidget: FC<DashboardWidgetProps> = ({ className, session }) => {
 
     try {
       if (userId) {
-        const response = await axios.get(`/api/agents?id=${userId}`);
+        const response = await axios.get(`/api/agents?userId=${userId}`);
         const fetchedAgents = response.data;
         console.log('fetchedAgents', fetchedAgents);
         setAgents(fetchedAgents);
@@ -154,7 +155,7 @@ const DashboardWidget: FC<DashboardWidgetProps> = ({ className, session }) => {
       typeName: 'contractTool',
       name: `0x1::delegation_pool::add_stake`,
       description:
-          "The `add_stake` function allows a delegator to add a specified amount of coins to the delegation pool. This amount is converted into shares, which represent the delegator's stake in the pool. The function ensures that the delegator is allowlisted and synchronizes the delegation pool with the underlying stake pool before executing the addition. The function also calculates and deducts any applicable fees from the added stake, ensuring that the delegator's balance is updated accordingly.",
+        "The `add_stake` function allows a delegator to add a specified amount of coins to the delegation pool. This amount is converted into shares, which represent the delegator's stake in the pool. The function ensures that the delegator is allowlisted and synchronizes the delegation pool with the underlying stake pool before executing the addition. The function also calculates and deducts any applicable fees from the added stake, ensuring that the delegator's balance is updated accordingly.",
       params: {
         user: {
           type: 'address',

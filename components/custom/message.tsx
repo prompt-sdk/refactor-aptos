@@ -16,6 +16,8 @@ import { PreviewAttachment } from './preview-attachment';
 import { Weather } from './weather';
 import '@/components/augmented/style.css';
 
+import { SmartAction } from './onchain'
+import { ViewFrame } from './view-frame'
 
 export const Message = ({
   sender,
@@ -117,14 +119,11 @@ export const Message = ({
                         console.log("typeFunction", typeFunction)
                         return (
                           <div key={toolCallId}>
-                            {typeTool == 'contractTool' && typeFunction == 'view' && (
-                              // IF contractTool = typeView
-                              // IF contractTool = type Entry
-                              <div>contractTool Call</div>
+                            {typeTool == 'contractTool' && typeFunction == 'entry' && (
+                              <SmartAction props={JSON.parse(result)} />
                             )}
                             {typeTool == 'widgetTool' && (
-                              <div>WidgettTool Call</div>
-                            )}
+                              <ViewFrame code={result} />)}
                             {toolName === 'getWeather' ? (
                               <Weather weatherAtLocation={result} />
                             ) : null}

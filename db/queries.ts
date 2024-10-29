@@ -111,15 +111,6 @@ export async function getAgentByUserId(userId: string): Promise<Array<Agent>> {
   }
 }
 
-export async function getAgentByAddress(address: string): Promise<Array<Agent>> {
-  try {
-    return await db.select().from(agent).where(eq(agent.address, address));
-  } catch (error) {
-    console.error('Failed to get user from database');
-    throw error;
-  }
-}
-
 export async function getAgentById(id: string) {
   try {
     const [selectedAgent] = await db
@@ -141,7 +132,6 @@ export async function createAgent({
   tool,
   userId,
   prompt,
-  address,
 }: Agent) {
   try {
     return await db
@@ -155,7 +145,6 @@ export async function createAgent({
         avatar,
         intro,
         userId,
-        address,
       })
       .returning({
         id: agent.id,
@@ -168,7 +157,6 @@ export async function createAgent({
         intro: agent.intro,
         userId: agent.userId,
         createdAt: agent.createdAt,
-        address: agent.address,
       });
   } catch (error) {
     console.error('Failed to create user in database');
