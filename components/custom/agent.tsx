@@ -219,9 +219,9 @@ export function Agent({
 
 
   return (
-    <div className="flex flex-col min-w-0 h-dvh bg-background">
+    <div className="flex flex-col min-w-0 h-dvh bg-background ">
       <ChatHeader selectedModelName={selectedModelName} />
-      <div className="flex flex-col min-w-0 gap-6 flex-1 overflow-y-scroll">
+      <div className="flex flex-col min-w-0 gap-6 flex-1 overflow-y-scroll scrollbar">
         <div className="flex flex-col w-full h-full items-center max-w-screen-2xl mx-auto">
           <h1 className="md:text-4xl font-bold text-2xl">Agents</h1>
           <div className="flex flex-col w-full mt-12 items-end">

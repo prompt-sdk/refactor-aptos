@@ -50,7 +50,7 @@ export function Chat({
       <ChatHeader selectedModelName={selectedModelName} />
       <div
         ref={messagesContainerRef}
-        className="flex flex-col min-w-0 gap-6 flex-1 overflow-y-scroll"
+        className="flex flex-col min-w-0 gap-6 flex-1 overflow-y-scroll scrollbar"
       >
         {messages.length === 0 && <Overview intro={agent?.intro || "GM"} />}
 
