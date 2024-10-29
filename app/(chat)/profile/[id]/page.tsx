@@ -10,7 +10,7 @@ const Profile = async ({ params }: { params: any }) => {
   return (
     <div className={'flex w-full grow items-center justify-center py-4'}>
       <div className="container flex flex-col items-center justify-center gap-6">
-        <ProfileInfor address={address} />
+        <ProfileInfor user={user} />
         <ProfileWidget user={user} />
       </div>
     </div>
