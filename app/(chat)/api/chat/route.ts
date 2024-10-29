@@ -13,7 +13,6 @@ import {
   makeRequest,
 } from '@/components/utils/utils';
 
-
 type ParametersData = Record<string, any>; // Define the shape of ParametersData based on your requirements
 
 // Schema for the `tool` object entries
@@ -39,7 +38,7 @@ export async function POST(request: Request) {
     agent: Agent;
     tools: Tool[];
   } = await request.json();
- const aptosClient = getAptosClient();
+  const aptosClient = getAptosClient();
 
   const session = await auth();
 
@@ -102,13 +101,14 @@ export async function POST(request: Request) {
           if (item.typeFunction == 'view') {
             // add try catch
             console.log('data', data);
-            const res = await aptosClient.view({ payload: data });
-            console.log('res', res);
+
             try {
-              return `${JSON.stringify(res)}`;
+              const res = await aptosClient.view({ payload: data });
+              console.log('res', res);
+              return `data: ${JSON.stringify(res)} `;
             } catch (error) {
               console.log(error);
-              return JSON.stringify(error);
+              return `data: ${JSON.stringify(error)} `;
             }
 
             // should use text generation
@@ -117,7 +117,6 @@ export async function POST(request: Request) {
         },
       };
       //if view return data
-      return tool;
     }
     if (item.typeName == 'widgetTool') {
       tool[item.typeName + '_' + item.typeFunction + '_' + generateId()] = {
@@ -159,10 +158,12 @@ export async function POST(request: Request) {
         }
       }
     }
-  }, []);
+    console.log(tool);
+    return tool;
+  }, {});
 
   const coreMessages = convertToCoreMessages(messages);
-
+  console.log('toolData', toolData);
   const result = await streamText({
     model: customModel(model),
     system: `Your name is ${agent.name} \n\n
