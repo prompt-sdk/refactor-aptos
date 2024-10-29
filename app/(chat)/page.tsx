@@ -1,5 +1,5 @@
 import { cookies } from 'next/headers';
-import { createAgent, getAgentById, getTools, getUser } from '@/db/queries';
+import { createAgent, getAgentById, getToolById , getTools} from '@/db/queries';
 import { Agent } from '@/db/schema';
 
 import { Chat } from '@/components/custom/chat';
@@ -15,18 +15,24 @@ export default async function Page(props: { searchParams: Promise<any> }) {
   const session: any = await auth()
   const id = generateUUID();
   const searchParams = await props.searchParams;
-  const { startAgent } = searchParams;
+  const { startAgent, widgetId } = searchParams;
 
   let agent: Agent;
   if (startAgent) {
     agent = await getAgentById(startAgent)
   } else {
+    if (widgetId) {
+      const [widget] = await getToolById(widgetId)
+      console.log(widget)
+    }
     AgentDefault.userId = session?.user?.id;
     [agent] = await createAgent(AgentDefault)
   }
   if (!agent) {
     return notFound()
   }
+
+
   const tools = await getTools(agent.tool as any);
   const cookieStore = await cookies();
   const value = cookieStore.get('model')?.value;

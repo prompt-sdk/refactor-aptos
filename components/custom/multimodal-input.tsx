@@ -20,18 +20,7 @@ import { Button } from '../ui/button';
 import { Textarea } from '../ui/textarea';
 import '@/components/augmented/style.css';
 
-const suggestedActions = [
-  {
-    title: 'What is the weather',
-    label: 'in San Francisco?',
-    action: 'What is the weather in San Francisco?',
-  },
-  {
-    title: "Answer like I'm 5,",
-    label: 'why is the sky blue?',
-    action: "Answer like I'm 5, why is the sky blue?",
-  },
-];
+
 
 export function MultimodalInput({
   input,
@@ -41,6 +30,7 @@ export function MultimodalInput({
   attachments,
   setAttachments,
   messages,
+  suggestedActions,
   append,
   handleSubmit,
 }: {
@@ -51,6 +41,7 @@ export function MultimodalInput({
   attachments: Array<Attachment>;
   setAttachments: Dispatch<SetStateAction<Array<Attachment>>>;
   messages: Array<Message>;
+  suggestedActions: any[];
   append: (
     message: Message | CreateMessage,
     chatRequestOptions?: ChatRequestOptions
@@ -152,6 +143,7 @@ export function MultimodalInput({
     [setAttachments]
   );
 
+  console.log(suggestedActions);
   return (
     <div className="relative w-full flex flex-col gap-4">
       {messages.length === 0 &&
@@ -172,7 +164,7 @@ export function MultimodalInput({
                   onClick={async () => {
                     append({
                       role: 'user',
-                      content: suggestedAction.action,
+                      content: suggestedAction.content,
                     });
                   }}
                   className='border-none outline-none  aug-tl1-2 aug-clip-tl
@@ -182,7 +174,7 @@ export function MultimodalInput({
                 >
                   <span className="font-medium">{suggestedAction.title}</span>
                   <span className="text-muted-foreground">
-                    {suggestedAction.label}
+                    {suggestedAction.description}
                   </span>
                 </div>
               </motion.div>

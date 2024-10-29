@@ -164,14 +164,23 @@ export async function createAgent({
   }
 }
 
-export async function getTool(id: string): Promise<Array<Tool>> {
+export async function getToolByUserId(userId: string): Promise<Array<Tool>> {
   try {
-    return await db.select().from(tool).where(eq(tool.userId, id));
+    return await db.select().from(tool).where(eq(tool.userId, userId));
   } catch (error) {
     console.error('Failed to get user from database');
     throw error;
   }
 }
+export async function getToolById(id: string): Promise<Array<Tool>> {
+  try {
+    return await db.select().from(tool).where(eq(tool.id, id));
+  } catch (error) {
+    console.error('Failed to get user from database');
+    throw error;
+  }
+}
+
 export async function getTools(ids: any[]): Promise<Array<Tool>> {
   try {
     return await db.select().from(tool).where(inArray(tool.id, ids));

@@ -60,7 +60,7 @@ export function Agent({
   });
 
   const { data: toolsData, error, isLoading: isLoadingTools } = useSWR(
-    session ? `/api/tools?id=${session.user?.id}` : null,
+    session ? `/api/tools?userId=${session.user?.id}` : null,
     async (url) => {
       const response = await axios.get(url);
       return response.data.filter((tool: any) => tool.type !== 'apiTool');

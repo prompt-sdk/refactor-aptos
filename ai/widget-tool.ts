@@ -54,29 +54,29 @@ export async function widgetTool({ prompt }: any) {
   Input:
   
   
-  Create a button with action "Submit"
+  Create a button send 0.1 aptos to 0x123456789
   Output:
   
   
   (props) => {
   return (
-      <a href={'/chat?prompt=Submit&widgetId='+props.widgetId} className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">
-          Submit
+      <a href={'/chat?prompt="send 0.1 aptos to 0x123456789"&widgetId='+props.widgetId} className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">
+          Send APTOS
       </a>
       )
   }
   Example 2 – Action Button with Custom Text:
   Input:
   
+  Stake 0.1 APTOS  
   
   Create an action button with label "Save"
   Output:
   
-  
   (props) => {
   return (
-      <a href={'/chat?prompt=Save&widgetId='+props.widgetId} className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">
-          Save
+      <a href={'/chat?prompt=Stake 0.1 APTOS  &widgetId='+props.widgetId} className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">
+          Stake
       </a>
   )
   

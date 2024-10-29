@@ -34,7 +34,7 @@ export const WidgetSelectionModal: FC<WidgetSelectionModalProps> = ({ className,
     setIsLoading(true);
 
     try {
-      const response = await fetch(`/api/tools?id=${user?.id}`);
+      const response = await fetch(`/api/tools?userId=${user?.id}`);
       if (!response.ok) {
         throw new Error('Failed to fetch tools');
       }

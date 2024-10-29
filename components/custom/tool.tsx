@@ -314,7 +314,7 @@ export function Tool({
       await uploadDataToApi(toolData);
     }
     handleClose();
-    mutate(session ? `/api/tools?id=${session.user?.id}` : null);
+    mutate(session ? `/api/tools?userId=${session.user?.id}` : null);
     toast({
       title: 'Tool created successfully!',
       description: 'Your tool has been created successfully.'
@@ -334,7 +334,7 @@ export function Tool({
     setLoadingFunctions({});
   };
 
-  const { data: toolsData, error: toolsError, isLoading: toolsLoading } = useSWR(`/api/tools?id=${userId}`, async (url) => {
+  const { data: toolsData, error: toolsError, isLoading: toolsLoading } = useSWR(`/api/tools?userId=${userId}`, async (url) => {
     try {
       const response = await axios.get(url);
       return response.data;
@@ -393,7 +393,7 @@ export function Tool({
         userId: userId
       };
       await uploadDataToApi(toolData);
-      mutate(session ? `/api/tools?id=${session.user?.id}` : null);
+      mutate(session ? `/api/tools?userId=${session.user?.id}` : null);
       handleCloseCreateApiTool();
       toast({
         title: 'API Tool created successfully!',
@@ -448,7 +448,7 @@ export function Tool({
       console.log('Widget saved successfully:', response.data);
       setIsOpenCreateWidget(false);
       resetForm();
-      mutate(session ? `/api/tools?id=${session.user?.id}` : null);
+      mutate(session ? `/api/tools?userId=${session.user?.id}` : null);
       toast({
         title: 'Widget created successfully!',
         description: 'Your widget has been created and saved.'

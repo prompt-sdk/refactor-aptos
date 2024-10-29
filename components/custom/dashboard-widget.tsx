@@ -78,7 +78,7 @@ const DashboardWidget: FC<DashboardWidgetProps> = ({ className, user }) => {
     setIsLoadingTools(true);
     try {
       const userId = user?.id;
-      const response = await axios.get(`/api/tools?id=${userId}`);
+      const response = await axios.get(`/api/tools?userId=${userId}`);
       if (response) {
         const contractTools = response.data.filter((tool: any) => tool.type === 'contractTool');
         setTools(contractTools);

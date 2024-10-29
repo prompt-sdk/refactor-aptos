@@ -25,12 +25,12 @@ export function Chat({
   initialMessages: Array<Message>;
   selectedModelName: Model['name'];
   agent: Agent;
-  tools:Tool[];
+  tools: Tool[];
   username: string;
 }) {
   const { messages, handleSubmit, input, setInput, append, isLoading, stop } =
     useChat({
-      body: { id, model: selectedModelName, agent ,tools},
+      body: { id, model: selectedModelName, agent, tools },
       initialMessages,
       onFinish: () => {
         window.history.replaceState({}, '', `/chat/${id}`);
@@ -49,7 +49,7 @@ export function Chat({
         ref={messagesContainerRef}
         className="flex flex-col min-w-0 gap-6 flex-1 overflow-y-scroll"
       >
-        {messages.length === 0 && <Overview />}
+        {messages.length === 0 && <Overview intro={agent?.intro || "GM"} />}
 
         {messages.map((message) => (
           <PreviewMessage
@@ -78,6 +78,7 @@ export function Chat({
           attachments={attachments}
           setAttachments={setAttachments}
           messages={messages}
+          suggestedActions={agent.suggestedActions as any}
           append={append}
         />
       </form>
