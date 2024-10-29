@@ -50,8 +50,7 @@ export async function POST(request: Request) {
     return new Response('Model not found', { status: 404 });
   }
 
-  let toolData: Tool = {};
-  toolData = tools.reduce((tool: any, item: any) => {
+  const toolData = tools.reduce((tool: any, item: any) => {
     if (item.typeName == 'contractTool') {
       const filteredObj = Object.keys(item.params).reduce(
         (acc: any, key: any) => {
@@ -99,8 +98,7 @@ export async function POST(request: Request) {
             return JSON.stringify(data);
           }
           if (item.typeFunction == 'view') {
-            // add try catch
-            console.log('data', data);
+            
 
             try {
               const res = await aptosClient.view({ payload: data });
@@ -123,7 +121,7 @@ export async function POST(request: Request) {
         description: item.description,
         parameters: z.object({}),
         execute: async (testParams: any) => {
-          return 'item.code';
+          return item.code;
         },
       };
     }
@@ -158,12 +156,10 @@ export async function POST(request: Request) {
         }
       }
     }
-    console.log(tool);
     return tool;
   }, {});
 
   const coreMessages = convertToCoreMessages(messages);
-  console.log('toolData', toolData);
   const result = await streamText({
     model: customModel(model),
     system: `Your name is ${agent.name} \n\n
