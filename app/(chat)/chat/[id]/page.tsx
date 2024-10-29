@@ -41,6 +41,7 @@ export default async function Page(props: { params: Promise<any> }) {
 
   return (
     <PreviewChat
+      prompt=''
       id={chat.id}
       username={session.user?.username}
       initialMessages={chat.messages}

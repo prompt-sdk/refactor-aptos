@@ -32,6 +32,7 @@ export function MultimodalInput({
   messages,
   suggestedActions,
   append,
+  startPrompt,
   handleSubmit,
 }: {
   input: string;
@@ -46,6 +47,7 @@ export function MultimodalInput({
     message: Message | CreateMessage,
     chatRequestOptions?: ChatRequestOptions
   ) => Promise<string | null | undefined>;
+  startPrompt: string;
   handleSubmit: (
     event?: {
       preventDefault?: () => void;
@@ -61,7 +63,14 @@ export function MultimodalInput({
       adjustHeight();
     }
   }, []);
-
+  useEffect(() => {
+    if (startPrompt && startPrompt.length > 1) {
+      append({
+        role: 'assistant',
+        content: startPrompt,
+      });
+    }
+  }, [startPrompt])
   const adjustHeight = () => {
     if (textareaRef.current) {
       textareaRef.current.style.height = 'auto';
@@ -143,7 +152,6 @@ export function MultimodalInput({
     [setAttachments]
   );
 
-  console.log(suggestedActions);
   return (
     <div className="relative w-full flex flex-col gap-4">
       {messages.length === 0 &&

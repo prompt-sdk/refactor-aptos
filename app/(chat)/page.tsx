@@ -15,7 +15,7 @@ export default async function Page(props: { searchParams: Promise<any> }) {
   const session: any = await auth()
   const id = generateUUID();
   const searchParams = await props.searchParams;
-  const { startAgent, widgetId } = searchParams;
+  const { startAgent, widgetId, prompt } = searchParams;
 
   let agent: Agent;
   if (startAgent) {
@@ -23,11 +23,9 @@ export default async function Page(props: { searchParams: Promise<any> }) {
   } else {
     if (widgetId) {
       const [widget] = await getToolById(widgetId)
-
       AgentDefault.tool = widget.toolWidget
     }
     AgentDefault.userId = session?.user?.id;
-    console.log(AgentDefault);
     [agent] = await createAgent(AgentDefault)
   }
   if (!agent) {
@@ -35,6 +33,7 @@ export default async function Page(props: { searchParams: Promise<any> }) {
   }
 
 
+  // start prompt
   const tools = await getTools(agent.tool as any);
   const cookieStore = await cookies();
   const value = cookieStore.get('model')?.value;
@@ -49,6 +48,7 @@ export default async function Page(props: { searchParams: Promise<any> }) {
       initialMessages={[]}
       selectedModelName={selectedModelName}
       tools={tools}
+      prompt={prompt}
       agent={agent}
     />
   );

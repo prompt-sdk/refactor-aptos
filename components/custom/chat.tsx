@@ -19,6 +19,7 @@ export function Chat({
   selectedModelName,
   agent,
   tools,
+  prompt,
   username
 }: {
   id: string;
@@ -26,6 +27,7 @@ export function Chat({
   selectedModelName: Model['name'];
   agent: Agent;
   tools: Tool[];
+  prompt: string;
   username: string;
 }) {
   const { messages, handleSubmit, input, setInput, append, isLoading, stop } =
@@ -36,6 +38,7 @@ export function Chat({
         window.history.replaceState({}, '', `/chat/${id}`);
       },
     });
+
 
   const [messagesContainerRef, messagesEndRef] =
     useScrollToBottom<HTMLDivElement>();
@@ -79,6 +82,7 @@ export function Chat({
           setAttachments={setAttachments}
           messages={messages}
           suggestedActions={agent.suggestedActions as any}
+          startPrompt={prompt}
           append={append}
         />
       </form>
