@@ -132,7 +132,6 @@ export async function createAgent({
   tool,
   userId,
   prompt,
-  params,
 }: Agent) {
   try {
     return await db
@@ -146,7 +145,6 @@ export async function createAgent({
         avatar,
         intro,
         userId,
-        params,
       })
       .returning({
         id: agent.id,
@@ -159,7 +157,6 @@ export async function createAgent({
         intro: agent.intro,
         userId: agent.userId,
         createdAt: agent.createdAt,
-        params: agent.params,
       });
   } catch (error) {
     console.error('Failed to create user in database');
