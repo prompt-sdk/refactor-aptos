@@ -1,6 +1,6 @@
 'use client';
 
-import { useSearchParams } from 'next/navigation';
+
 import { FC, ReactNode } from 'react';
 import { ErrorBoundary as ReactErrorBoundary, useErrorBoundary } from 'react-error-boundary';
 
@@ -9,8 +9,7 @@ type ErrorFallbackProps = {
   error: Error;
 };
 
-const ErrorFallback: FC<ErrorFallbackProps> = ({ error }) => {
-  const searchParams = useSearchParams();
+export const ErrorFallback: FC<any> = ({ error }) => {
   const { resetBoundary } = useErrorBoundary();
 
   return (

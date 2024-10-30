@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
 import StringToReactComponent from 'string-to-react-component';
 import { Aptos, AptosConfig, Network } from '@aptos-labs/ts-sdk';
-
+import {ErrorFallback} from '@/components/common/error-boundary'
 export const ViewFrame = ({ code }: { code: string }) => {
   const config = new AptosConfig({ network: Network.MAINNET });
   const aptos = new Aptos(config);
