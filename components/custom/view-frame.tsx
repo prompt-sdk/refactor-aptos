@@ -46,7 +46,7 @@ export const ViewFrame = ({ code }: { code: string }) => {
 
   return (
     <>
-      <ErrorBoundary fallback={<div>Something went wrong</div>}>
+      <ErrorBoundary fallback={<div>Something went wrong</div> }>
         <StringToReactComponent data={{ useEffect, useState, aptos, processData }}>
           {truncatedCode}
         </StringToReactComponent>

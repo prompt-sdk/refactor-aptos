@@ -117,12 +117,11 @@ export const Message = ({
                             {typeTool == 'contractTool' && typeFunction == 'entry' ? (
                               <SmartAction props={JSON.parse(result)} />
                             ) :
-                              typeTool == 'widgetTool' ?
-                                <ViewFrame code={result} /> :
-                                `Calling ${typeTool == 'contractTool' ?
-                                  'Contract' : typeTool == 'widgetTool' ?
-                                    'Widget' : typeTool == 'apiTool' ?
-                                      'API Tool' : 'unknow Tool'}
+                              typeTool == 'widgetTool' ? <ViewFrame code={result} /> :
+                                `Calling ${typeTool == 'contractTool' ? 'Contract' :
+                                  typeTool == 'widgetTool' ? 'Widget' :
+                                    typeTool == 'apiTool' ? 'API Tool' :
+                                      'unknow Tool'}
                                     ${toolCallId}`
                             }
 

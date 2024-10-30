@@ -3,16 +3,12 @@
 import { FC, useCallback, useEffect, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import axios from 'axios';
 import classNames from 'classnames';
 import { Copy, LogOut, SettingsIcon, User as UserUI, Share2 } from 'lucide-react';
 import CustomButton from '@/components/custom/custom-button';
-
 import BoderImage from '@/components/common/border-image';
-
 import { collapseAddress } from '@/components/utils/address';
 import ProfileElementDecor1 from '@/public/assets/svgs/profile-element-decor-1.svg';
-
 import DashboardAvatar from './dashboard-avatar';
 import DashboardTopProfileDecor from './dashboard-top-profile-decor';
 import {
@@ -53,16 +49,6 @@ const DashboardProfile = ({ user }: { user: User | null }) => {
   const { account, signAndSubmitTransaction, wallet, disconnect } = useWallet();
   const aptosClient = getAptosClient();
 
-  useEffect(() => {
-    if (account) {
-
-    }
-    if (user) {
-
-
-    }
-
-  }, [account, user])
 
   const loadBalance = useCallback(async () => {
     try {

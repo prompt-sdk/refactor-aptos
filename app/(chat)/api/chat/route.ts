@@ -5,6 +5,7 @@ import { customModel } from '@/ai';
 import { auth } from '@/app/(auth)/auth';
 import { deleteChatById, getChatById, saveChat } from '@/db/queries';
 import { Agent } from '@/db/schema';
+import { widgetWithArgs } from '@/ai/widget-tool';
 
 import { Model, models } from '@/lib/model';
 import {
@@ -105,7 +106,6 @@ export async function POST(request: Request) {
       //if view return data
     }
     if (item.typeName == 'widgetTool') {
-      console.log(item.params);
 
       const filteredObj: any = item.params
         ? convertParamsToZod(item.params)
@@ -117,10 +117,11 @@ export async function POST(request: Request) {
       );
       tool[item.typeName + '_' + item.typeFunction + '_' + generateId()] = {
         description: item.description,
-        parameters: ParametersSchema,
+        parameters: z.object(ParametersSchema),
         execute: async (ParametersSchema: ParametersData) => {
-          //const code = await widgetTool({ prompt: item.prompts, args });
-          return item.code;
+          const prompt = `${item.prompts} ${JSON.stringify(ParametersSchema)}`;
+          const code = await widgetWithArgs({ prompt });
+          return code;
         },
       };
     }
@@ -213,7 +214,6 @@ export async function POST(request: Request) {
               if (item.accessToken) {
                 headers.Authorization = `Bearer ${item.accessToken}`;
               }
-              console.log('zodObj', arg);
               const callOptions: RequestInit = {
                 method: method,
                 headers: {
@@ -230,7 +230,6 @@ export async function POST(request: Request) {
               try {
                 const response = await fetch(completeUrl, callOptions);
                 const data = await response.json();
-
                 return data;
               } catch (error) {
                 console.error('Failed to make API request:', error);

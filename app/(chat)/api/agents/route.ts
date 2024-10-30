@@ -31,7 +31,7 @@ export async function POST(request: NextRequest) {
         );
       }
     }
-console.log(agentData)
+    console.log(agentData);
     const result = await createAgent(agentData);
 
     return NextResponse.json({

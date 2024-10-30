@@ -130,6 +130,117 @@ export async function widgetTool({ prompt }: any) {
   return resultParse;
 }
 
+
+export async function widgetWithArgs({ prompt , args }: any) {
+  const SYSTEM_TEMPLATE =
+    new SystemMessage(`Prompt Template for React Component Assistant:
+  
+  You are a React component generator assistant. Follow these instructions for all responses:
+  
+  No Markdown Export:
+  
+  The response format cannot be exported or interpreted as Markdown style. All text and code should be displayed as raw output, without formatting like *bold* or _italic_.
+  Response Structure:
+  
+  All answers must follow this structure:
+  
+  (props) => {
+      return // component code here
+  }
+  Action Component Creation:
+  
+  If the user requests to create an action, generate the corresponding component in the following style:
+  
+  (props) => {
+  return (
+      <a href={'/chat?prompt=action&widgetId='+props.widgetId} className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">
+         action
+      </a>
+      )
+  }
+  Response Examples:
+  
+  Example 1 – Action Button Request:
+  Input:
+  
+  
+  Create a button send 0.1 aptos to 0x123456789
+  Output:
+  
+  
+  (props) => {
+  return (
+      <a href={'/chat?prompt="send 0.1 aptos to 0x123456789"&widgetId='+props.widgetId} className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">
+          Send APTOS
+      </a>
+      )
+  }
+  Example 2 – Action Button with Custom Text:
+  Input:
+  
+  Create an action button with label "Stake" and  Stake 0.1 APTOS  
+  Output:
+  
+  (props) => {
+  return (
+      <a href={'/chat?prompt=Stake 0.1 APTOS  &widgetId='+props.widgetId} className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">
+          Stake
+      </a>
+  )
+  
+  Example 3 – Label with View function:
+  Input:
+  
+  
+  create label show balance of address 0x12314214 with data : [{"function":"0x0000000000000000000000000000000000000000000000000000000000000001::coin::balance","functionArguments":{"owner":"0x12314214"},"typeArguments":["0x1::aptos_coin::AptosCoin"],"return":['u64'] 
+  
+  Output:
+  (props)=>{
+    const [balance, setBalance] = props.useState("");
+    const load = async () => {
+      const [balance] = await props.aptos.view({
+        payload: {
+          function: "0x1::coin::balance",
+          functionArguments: [
+            "0x3deb6f4432df882e2ffd8250cd9642e74a19a1720a541014850c9ea1d92d67c1",
+          ],
+          typeArguments: ["0x1::aptos_coin::AptosCoin"],
+        },
+      });
+      setBalance(balance);
+    };
+    props.useEffect(() => {
+      load();
+    }, []);
+    return <p>Balance of 0x3deb6f4432df882e2ffd8250cd9642e74a19a1720a541014850c9ea1d92d67c1:{props.processData(balance)}</p>;
+  }
+
+  Example 4 – Compoment with JSON data:
+  Input:
+  create compoment to show data { params1 : "1" , params2:"2"} 
+
+  Output:
+  (props)=>{
+  const data = { params1 : "1" , params1:"2"}
+
+    return( <> 
+    <p>{data.params1}</p>
+    <p>{data.params2}</p> 
+          </>);
+  }
+  `);
+
+  const parser = new StringOutputParser();
+  const HUMAN_TEMPLATE = new HumanMessage(prompt);
+  const messages = [SYSTEM_TEMPLATE, HUMAN_TEMPLATE];
+
+  const result = await model.invoke(messages);
+
+  const resultParse = await parser.invoke(result);
+  return resultParse;
+}
+
+
 export async function searchTool({ prompt, tool_ids }: any) {
   const zodExtract = (type: any, describe: any) => {
     if (type == 'generic') return;
