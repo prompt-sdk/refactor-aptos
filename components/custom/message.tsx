@@ -108,29 +108,31 @@ export const Message = ({
                 {toolInvocations && toolInvocations.length > 0 ? (
                   <div className="flex flex-col gap-4">
                     {toolInvocations.map((toolInvocation) => {
-                      const { toolName, toolCallId, state } = toolInvocation;
+                      const { toolName, toolCallId, state, args } = toolInvocation;
+                      const [typeTool, typeFunction] = toolName.split("_")
+
                       if (state === 'result') {
                         const { result } = toolInvocation;
-                        const [typeTool, typeFunction] = toolName.split("_")
+
                         return (
                           <div key={toolCallId}>
-                            {typeTool == 'contractTool' && typeFunction == 'entry' ? (
-                              <SmartAction props={JSON.parse(result)} />
-                            ) :
-                              typeTool == 'widgetTool' ? <ViewFrame code={result} /> :
-                                `Calling ${typeTool == 'contractTool' ? 'Contract' :
-                                  typeTool == 'widgetTool' ? 'Widget' :
-                                    typeTool == 'apiTool' ? 'API Tool' :
-                                      'unknow Tool'}
-                                    ${toolCallId}`
-                            }
+                            {typeTool == 'widgetTool' ? <ViewFrame code={result} /> :
+                              `Calling ${typeTool == 'contractTool' ? 'Contract' :
+                                typeTool == 'widgetTool' ? 'Widget' :
+                                  typeTool == 'apiTool' ? 'API Tool' :
+                                    'unknow Tool'}
+                                    ${toolCallId}`}
 
                           </div>
                         );
                       } else {
+                        const [typeTool, typeFunction, typeAddress, functionName] = toolName.split("_")
+                        console.log(toolName)
                         return (
                           <div key={toolCallId} className="skeleton">
                             Calling tool {toolCallId}
+                            {typeTool == 'contractTool' && typeFunction == 'entry' ? <SmartAction props={args} functionName={functionName} /> : ""}
+
                           </div>
                         );
                       }

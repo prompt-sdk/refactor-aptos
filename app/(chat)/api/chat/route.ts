@@ -67,7 +67,13 @@ export async function POST(request: Request) {
       //     return 'aptos address : 0x1::aptos_coin::AptosCoin';
       //   },
       // };
-      tool[item.typeName + '_' + item.typeFunction + '_' + generateId()] = {
+      tool[
+        item.typeName +
+          '_' +
+          item.typeFunction +
+          '_' +
+          item.name.replaceAll('::', 'o0')
+      ] = {
         description: item.description,
         parameters: z.object(ParametersSchema),
         execute: async (ParametersData: ParametersData) => {
@@ -87,7 +93,7 @@ export async function POST(request: Request) {
             typeArguments: Object.values(filteredObjCointype),
           };
           if (item.typeFunction == 'entry') {
-            return JSON.stringify(data);
+            return `data: ${JSON.stringify(data)}`;
           }
           if (item.typeFunction == 'view') {
             try {
@@ -106,7 +112,6 @@ export async function POST(request: Request) {
       //if view return data
     }
     if (item.typeName == 'widgetTool') {
-
       const filteredObj: any = item.params
         ? convertParamsToZod(item.params)
         : z.object({});
