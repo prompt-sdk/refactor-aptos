@@ -45,6 +45,7 @@ const DashboardProfile = ({ user }: { user: User | null }) => {
   const [balance, setBalance] = useState<string | null>(null);
   const [isOpenSend, setIsOpenSend] = useState<boolean>(false);
   const [amount, setAmount] = useState<string | null>(null);
+  const [accountAddress, setAccountAddress] = useState<string | null>(null);
   const [receive, setReceive] = useState<string | null>(null);
   const [isOpenReceive, setIsOpenReceive] = useState<boolean>(false);
   const [pending, setPending] = useState<boolean>(false);
@@ -52,21 +53,42 @@ const DashboardProfile = ({ user }: { user: User | null }) => {
   const { account, signAndSubmitTransaction, wallet, disconnect } = useWallet();
   const aptosClient = getAptosClient();
 
+  useEffect(() => {
+    if (account) {
+
+    }
+    if (user) {
+
+
+    }
+
+  }, [account, user])
+
   const loadBalance = useCallback(async () => {
     try {
-      const balance = await getAptosBalance(account?.address.toString() || '');
-      // console.log('balance', balance);
-      setBalance(Number(balance).toFixed(2));
+      if (account?.address) {
+        setAccountAddress(account.address.toString())
+        const balance = await getAptosBalance(account?.address.toString());
+        setBalance(Number(balance).toFixed(2));
+      }
+      if (user) {
+
+        const balance = await getAptosBalance(user?.username);
+        setBalance(Number(balance).toFixed(2));
+        setAccountAddress(user?.username)
+      }
+
+
     } catch (error) {
       console.error('Error loading balance:', error);
     }
-  }, [account]);
+  }, [account, user]);
 
   useEffect(() => {
-    if (account) {
+    if (account || user) {
       loadBalance();
     }
-  }, [account]);
+  }, []);
 
   const toggleOpenSend = () => {
     setIsOpenSend(!isOpenSend);
@@ -142,9 +164,9 @@ const DashboardProfile = ({ user }: { user: User | null }) => {
   };
 
   const copyAddress = useCallback(async () => {
-    if (!account?.address) return;
+    if (!accountAddress) return;
     try {
-      await navigator.clipboard.writeText(account.address);
+      await navigator.clipboard.writeText(accountAddress);
       toast({
         title: 'Success',
         description: 'Copied wallet address to clipboard.'
@@ -156,10 +178,10 @@ const DashboardProfile = ({ user }: { user: User | null }) => {
         description: 'Failed to copy wallet address.'
       });
     }
-  }, [account?.address, toast]);
+  }, [accountAddress, toast]);
 
   const copyProfileLink = useCallback(async () => {
-    const profileUrl = `${window.location.origin}/profile/${account?.address.toString()}`;
+    const profileUrl = `${window.location.origin}/profile/${accountAddress}`;
     try {
       await navigator.clipboard.writeText(profileUrl);
       toast({
@@ -173,7 +195,7 @@ const DashboardProfile = ({ user }: { user: User | null }) => {
         description: 'Failed to copy profile link.'
       });
     }
-  }, [account?.address, toast]);
+  }, [accountAddress, toast]);
 
   const handleDisconnect = useCallback(async () => {
     if (account) {
@@ -192,7 +214,7 @@ const DashboardProfile = ({ user }: { user: User | null }) => {
             <DashboardAvatar className="shrink-0" imageUrl={'/assets/images/avatar/avatar-1.jpeg'} altText="Avatar" />
             <div className="flex w-full flex-col items-start gap-3">
               <p className="text-wrap break-words text-xl font-bold">
-                {collapseAddress(account?.address.toString() || '')}
+                {accountAddress && collapseAddress(accountAddress)}
               </p>
               <p className="text-sm">Welcome back</p>
             </div>
@@ -207,7 +229,7 @@ const DashboardProfile = ({ user }: { user: User | null }) => {
               </DropdownMenuItem>
               <DropdownMenuItem asChild>
                 <Link
-                  href={`/profile/${account?.address.toString()}`}
+                  href={`/profile/${accountAddress}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex gap-2"
@@ -287,7 +309,7 @@ const DashboardProfile = ({ user }: { user: User | null }) => {
         <AptosReceiveModal
           isOpen={isOpenReceive}
           onClose={() => setIsOpenReceive(false)}
-          address={account?.address.toString() as string}
+          address={accountAddress as string}
         />
       </div>
     </BoderImage>
