@@ -36,13 +36,16 @@ const ProfileInfor: FC<ProfileInforProps> = ({ className, user }) => {
   const { toast } = useToast();
 
   const loadBalance = useCallback(async () => {
-    try {
-      const balance = await getAptosBalance(user.username);
-      // console.log('balance', balance);
-      setBalance(Number(balance).toFixed(2));
-    } catch (error) {
-      console.error('Error loading balance:', error);
+    if (user) {
+      try {
+        const balance = await getAptosBalance(user.username);
+        // console.log('balance', balance);
+        setBalance(Number(balance).toFixed(2));
+      } catch (error) {
+        console.error('Error loading balance:', error);
+      }
     }
+
   }, [user]);
 
   useEffect(() => {
@@ -77,7 +80,7 @@ const ProfileInfor: FC<ProfileInforProps> = ({ className, user }) => {
           <div className="flex grow flex-wrap items-center gap-2 md:flex-nowrap">
             <DashboardAvatar className="shrink-0" imageUrl={'/assets/images/avatar/avatar-1.jpeg'} altText="Avatar" />
             <div className="flex w-full flex-col items-start gap-3">
-              <p className="text-wrap break-words text-xl font-bold">{collapseAddress(user.username)}</p>
+              <p className="text-wrap break-words text-xl font-bold">{user && collapseAddress(user.username)}</p>
               <p className="text-sm">Wellcome</p>
             </div>
           </div>

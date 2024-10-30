@@ -105,34 +105,33 @@ export const Message = ({
                     <Markdown>{content as string}</Markdown>
                   </div>
                 )}
-
                 {toolInvocations && toolInvocations.length > 0 ? (
                   <div className="flex flex-col gap-4">
                     {toolInvocations.map((toolInvocation) => {
                       const { toolName, toolCallId, state } = toolInvocation;
-
                       if (state === 'result') {
                         const { result } = toolInvocation;
-
                         const [typeTool, typeFunction] = toolName.split("_")
-                        console.log("typeTool", typeTool)
-                        console.log("typeFunction", typeFunction)
                         return (
                           <div key={toolCallId}>
-                            {typeTool == 'contractTool' && typeFunction == 'entry' && (
+                            {typeTool == 'contractTool' && typeFunction == 'entry' ? (
                               <SmartAction props={JSON.parse(result)} />
-                            )}
-                            {typeTool == 'widgetTool' && (
-                              <ViewFrame code={result} />)}
-                            {toolName === 'getWeather' ? (
-                              <Weather weatherAtLocation={result} />
-                            ) : null}
+                            ) :
+                              typeTool == 'widgetTool' ?
+                                <ViewFrame code={result} /> :
+                                `Calling ${typeTool == 'contractTool' ?
+                                  'Contract' : typeTool == 'widgetTool' ?
+                                    'Widget' : typeTool == 'apiTool' ?
+                                      'API Tool' : 'unknow Tool'}
+                                    ${toolCallId}`
+                            }
+
                           </div>
                         );
                       } else {
                         return (
                           <div key={toolCallId} className="skeleton">
-                            {toolName === 'getWeather' ? <Weather /> : null}
+                            Calling tool {toolCallId}
                           </div>
                         );
                       }

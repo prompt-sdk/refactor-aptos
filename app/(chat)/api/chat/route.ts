@@ -9,10 +9,10 @@ import { Agent } from '@/db/schema';
 import { Model, models } from '@/lib/model';
 import {
   zodExtract,
-  parseRequestBody,
-  makeRequest,
+  extractParameters,
+  jsonSchemaToZodSchema,
+  getUrl,
 } from '@/components/utils/utils';
-
 
 type ParametersData = Record<string, any>; // Define the shape of ParametersData based on your requirements
 
@@ -39,7 +39,7 @@ export async function POST(request: Request) {
     agent: Agent;
     tools: Tool[];
   } = await request.json();
- const aptosClient = getAptosClient();
+  const aptosClient = getAptosClient();
 
   const session = await auth();
 
@@ -51,8 +51,7 @@ export async function POST(request: Request) {
     return new Response('Model not found', { status: 404 });
   }
 
-  let toolData: Tool = {};
-  toolData = tools.reduce((tool: any, item: any) => {
+  const toolData = tools.reduce((tool: any, item: any) => {
     if (item.typeName == 'contractTool') {
       const filteredObj = Object.keys(item.params).reduce(
         (acc: any, key: any) => {
@@ -100,15 +99,12 @@ export async function POST(request: Request) {
             return JSON.stringify(data);
           }
           if (item.typeFunction == 'view') {
-            // add try catch
-            console.log('data', data);
-            const res = await aptosClient.view({ payload: data });
-            console.log('res', res);
             try {
-              return `${JSON.stringify(res)}`;
+              const res = await aptosClient.view({ payload: data });
+              return `data: ${JSON.stringify(res)} `;
             } catch (error) {
               console.log(error);
-              return JSON.stringify(error);
+              return `data: ${JSON.stringify(error)} `;
             }
 
             // should use text generation
@@ -117,52 +113,144 @@ export async function POST(request: Request) {
         },
       };
       //if view return data
-      return tool;
     }
     if (item.typeName == 'widgetTool') {
       tool[item.typeName + '_' + item.typeFunction + '_' + generateId()] = {
         description: item.description,
         parameters: z.object({}),
         execute: async (testParams: any) => {
-          return 'item.code';
+          return item.code;
         },
       };
     }
     if (item.typeName == 'apiTool') {
-      const spec = JSON.parse(item.spec);
-      const apiHost = spec.servers[0].url;
+      const spec = item.spec;
+      const baseUrl = spec.servers[0].url;
       for (const path in spec.paths) {
-        const endpoint = `${apiHost}${path}`;
-        for (const method in spec.paths[path]) {
-          const methodSchema = spec.paths[path][method];
-          const description =
-            methodSchema.summary || 'No description available';
+        // example of path: "/engines"
+        const methods = spec.paths[path];
+        for (const method in methods) {
+          // example of method: "get"
+          const spec = methods[method];
+          const toolName = spec.operationId;
+          const toolDesc = spec.description || spec.summary || toolName;
 
-          const { parameters, typeRequest } = parseRequestBody(
-            methodSchema,
-            spec
-          );
-          tool[item.typeName + '_' + path + '_' + generateId()] = {
-            description: description,
-            parameters,
-            execute: async (payload: any) => {
-              const res = await makeRequest(
-                item.accessToken,
-                endpoint,
-                payload,
-                method as any,
-                typeRequest as any
+          let zodObj: any = {};
+          if (spec.parameters) {
+            // Get parameters with in = path
+            let paramZodObjPath: any = {};
+            for (const param of spec.parameters.filter(
+              (param: any) => param.in === 'path'
+            )) {
+              paramZodObjPath = extractParameters(param, paramZodObjPath);
+            }
+
+            // Get parameters with in = query
+            let paramZodObjQuery: any = {};
+            for (const param of spec.parameters.filter(
+              (param: any) => param.in === 'query'
+            )) {
+              paramZodObjQuery = extractParameters(param, paramZodObjQuery);
+            }
+
+            // Combine path and query parameters
+            zodObj = {
+              ...zodObj,
+              PathParameters: z.object(paramZodObjPath),
+              QueryParameters: z.object(paramZodObjQuery),
+            };
+          }
+
+          if (spec.requestBody) {
+            let content: any = {};
+            if (spec.requestBody.content['application/json']) {
+              content = spec.requestBody.content['application/json'];
+            } else if (
+              spec.requestBody.content['application/x-www-form-urlencoded']
+            ) {
+              content =
+                spec.requestBody.content['application/x-www-form-urlencoded'];
+            } else if (spec.requestBody.content['multipart/form-data']) {
+              content = spec.requestBody.content['multipart/form-data'];
+            } else if (spec.requestBody.content['text/plain']) {
+              content = spec.requestBody.content['text/plain'];
+            }
+            const requestBodySchema = content.schema;
+            if (requestBodySchema) {
+              const requiredList = requestBodySchema.required || [];
+              const requestBodyZodObj = jsonSchemaToZodSchema(
+                requestBodySchema,
+                requiredList,
+                'properties'
               );
-              return JSON.stringify(res);
+              zodObj = {
+                ...zodObj,
+                RequestBody: requestBodyZodObj,
+              };
+            } else {
+              zodObj = {
+                ...zodObj,
+                input: z.string().describe('Query input').optional(),
+              };
+            }
+          }
+
+          if (!spec.parameters && !spec.requestBody) {
+            zodObj = {
+              input: z.string().describe('Query input').optional(),
+            };
+          }
+
+          tool[item.typeName + '_' + toolName + '_' + generateId()] = {
+            description: toolDesc,
+            parameters: z.object(zodObj),
+            execute: async (arg: any) => {
+              const headers: any = {
+                Accept: 'application/json',
+              };
+
+              if (item.accessToken) {
+                headers.Authorization = `Bearer ${item.accessToken}`;
+              }
+              console.log('zodObj', arg);
+              const callOptions: RequestInit = {
+                method: method,
+                headers: {
+                  'Content-Type': 'application/json',
+                  ...headers,
+                },
+              };
+              if (arg.RequestBody && method.toUpperCase() !== 'GET') {
+                callOptions.body = JSON.stringify(arg.RequestBody);
+              }
+              const completeUrl = getUrl(`${baseUrl}${path}`, arg);
+              console.log(completeUrl);
+             
+              try {
+                const response = await fetch(completeUrl, callOptions);
+                const data = await response.json();
+                
+                return data;
+              } catch (error) {
+                console.error('Failed to make API request:', error);
+                return `Failed to make API request: ${error}`;
+              }
+              // const arg = z.object(zodObj).parseAsync();
+              // let parsed
+              // try {
+              //     parsed = await schema.parseAsync(arg)
+              // } catch (e) {
+              //     throw new ToolInputParsingException(`Received tool input did not match expected schema`, JSON.stringify(arg))
+              // }
+              return 'pet';
             },
           };
         }
       }
     }
-  }, []);
-
+    return tool;
+  }, {});
   const coreMessages = convertToCoreMessages(messages);
-
   const result = await streamText({
     model: customModel(model),
     system: `Your name is ${agent.name} \n\n
