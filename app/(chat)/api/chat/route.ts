@@ -105,7 +105,11 @@ export async function POST(request: Request) {
       //if view return data
     }
     if (item.typeName == 'widgetTool') {
-      const filteredObj: any = convertParamsToZod(item.params);
+      console.log(item.params);
+
+      const filteredObj: any = item.params
+        ? convertParamsToZod(item.params)
+        : z.object({});
       const ParametersSchema: any = Object.fromEntries(
         Object.entries(filteredObj).filter(
           ([key, value]) => value !== undefined
@@ -113,8 +117,9 @@ export async function POST(request: Request) {
       );
       tool[item.typeName + '_' + item.typeFunction + '_' + generateId()] = {
         description: item.description,
-        parameters: z.object({}),
+        parameters: ParametersSchema,
         execute: async (ParametersSchema: ParametersData) => {
+          //const code = await widgetTool({ prompt: item.prompts, args });
           return item.code;
         },
       };
