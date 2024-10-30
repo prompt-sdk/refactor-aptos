@@ -8,7 +8,7 @@ import { Agent } from '@/db/schema';
 
 import { Model, models } from '@/lib/model';
 import {
-  zodExtract,
+  convertParamsToZod,
   extractParameters,
   jsonSchemaToZodSchema,
   getUrl,
@@ -53,22 +53,13 @@ export async function POST(request: Request) {
 
   const toolData = tools.reduce((tool: any, item: any) => {
     if (item.typeName == 'contractTool') {
-      const filteredObj = Object.keys(item.params).reduce(
-        (acc: any, key: any) => {
-          acc[key] = key = zodExtract(
-            item.params[key].type,
-            item.params[key].description
-          );
-          return acc;
-        },
-        {}
-      );
+      console.log(item.params)
+      const filteredObj: any = convertParamsToZod(item.params);
       const ParametersSchema: any = Object.fromEntries(
         Object.entries(filteredObj).filter(
           ([key, value]) => value !== undefined
         )
       );
-
       // tool[item.typeName + '_' + generateId()] = {
       //   description: 'Get aptos address',
       //   parameters: z.object({}),
@@ -225,24 +216,16 @@ export async function POST(request: Request) {
               }
               const completeUrl = getUrl(`${baseUrl}${path}`, arg);
               console.log(completeUrl);
-             
+
               try {
                 const response = await fetch(completeUrl, callOptions);
                 const data = await response.json();
-                
+
                 return data;
               } catch (error) {
                 console.error('Failed to make API request:', error);
                 return `Failed to make API request: ${error}`;
               }
-              // const arg = z.object(zodObj).parseAsync();
-              // let parsed
-              // try {
-              //     parsed = await schema.parseAsync(arg)
-              // } catch (e) {
-              //     throw new ToolInputParsingException(`Received tool input did not match expected schema`, JSON.stringify(arg))
-              // }
-              return 'pet';
             },
           };
         }

@@ -76,23 +76,25 @@ export const extractParameters = (param: any, paramZodObj: any) => {
   return paramZodObj;
 };
 export const getUrl = (baseUrl: string, requestObject: any) => {
-  let url = baseUrl
+  let url = baseUrl;
 
   // Add PathParameters to URL if present
   if (requestObject.PathParameters) {
-      for (const [key, value] of Object.entries(requestObject.PathParameters)) {
-          url = url.replace(`{${key}}`, encodeURIComponent(String(value)))
-      }
+    for (const [key, value] of Object.entries(requestObject.PathParameters)) {
+      url = url.replace(`{${key}}`, encodeURIComponent(String(value)));
+    }
   }
 
   // Add QueryParameters to URL if present
   if (requestObject.QueryParameters) {
-      const queryParams = new URLSearchParams(requestObject.QueryParameters as Record<string, string>)
-      url += `?${queryParams.toString()}`
+    const queryParams = new URLSearchParams(
+      requestObject.QueryParameters as Record<string, string>
+    );
+    url += `?${queryParams.toString()}`;
   }
 
-  return url
-}
+  return url;
+};
 export const jsonSchemaToZodSchema = (
   schema: any,
   requiredList: string[],
@@ -191,51 +193,9 @@ interface ApiRequestOptions {
   body?: string | FormData;
 }
 
-// Main function to make API requests
-export async function makeRequest(
-  accessToken: string,
-  endpoint: string,
-  payload: Record<string, any> | null = null,
-  method: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'parameters' | 'PATCH' = 'GET',
-  typeRequest:
-    | 'application/json'
-    | 'application/octet-stream'
-    | 'application/x-www-form-urlencoded' = 'application/json'
-): Promise<any> {
-  // Handle URL parameters if method is "parameters"
-  if (method === 'parameters') {
-    endpoint = fillUrl(endpoint, payload || {});
-    console.log('Final endpoint with parameters:', endpoint);
-  }
-
-  // Set up request headers
-  const headers: Record<string, string> = {
-    Authorization: `Bearer ${accessToken}`,
-    Accept: 'application/json',
-  };
-
-  // Set up request options
-  const options: ApiRequestOptions = {
-    method,
-    headers,
-  };
-
-  // Configure body based on the request type
-  if (typeRequest === 'application/json') {
-    headers['Content-Type'] = 'application/json';
-    if (payload) {
-      options.body = JSON.stringify(payload);
-    }
-  } else if (typeRequest === 'application/octet-stream') {
-    headers['Content-Type'] = 'application/octet-stream';
-    if (payload) {
-      options.body = JSON.stringify(payload); // Assuming payload is already a Blob or Buffer
-    }
-  } else if (typeRequest === 'application/x-www-form-urlencoded') {
-    headers['Content-Type'] = 'application/x-www-form-urlencoded';
-    if (payload) {
-      const urlEncodedData = new URLSearchParams(payload).toString();
-      options.body = urlEncodedData;
-    }
-  }
-}
+export const convertParamsToZod = (params: any) => {
+  return Object.keys(params).reduce((acc: any, key: any) => {
+    acc[key] = key = zodExtract(params[key].type, params[key].description);
+    return acc;
+  }, {});
+};

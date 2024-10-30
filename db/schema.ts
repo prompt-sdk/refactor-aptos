@@ -67,7 +67,6 @@ export const agent = pgTable('Agent', {
   userId: uuid('userId')
     .notNull()
     .references(() => user.id),
-  params: json('params'),
 });
 
 export type Agent = InferSelectModel<typeof agent>;
