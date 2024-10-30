@@ -126,7 +126,6 @@ export async function POST(request: Request) {
     if (item.typeName == 'apiTool') {
       const spec = item.spec;
       const baseUrl = spec.servers[0].url;
-      console.log(baseUrl)
       for (const path in spec.paths) {
         // example of path: "/engines"
         const methods = spec.paths[path];

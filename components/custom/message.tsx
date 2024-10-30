@@ -114,20 +114,20 @@ export const Message = ({
                         const [typeTool, typeFunction] = toolName.split("_")
                         return (
                           <div key={toolCallId}>
-                            {typeTool == 'contractTool' && typeFunction == 'entry' && (
+                            {typeTool == 'contractTool' && typeFunction == 'entry' ? (
                               <SmartAction props={JSON.parse(result)} />
-                            )}
-                            {typeTool == 'widgetTool' && (
-                              <ViewFrame code={result} />)}
-                            {toolName === 'getWeather' ? (
-                              <Weather weatherAtLocation={result} />
-                            ) : null}
+                            ) :
+                              typeTool == 'widgetTool' ?
+                                <ViewFrame code={result} /> :
+                                `Calling ${typeTool == 'contractTool' ? 'Contract' : typeTool == 'widgetTool' ? 'Widget' : typeTool == 'apiTool' ? 'API Tool' : 'unknow Tool'} ${toolCallId}`
+                            }
+
                           </div>
                         );
                       } else {
                         return (
                           <div key={toolCallId} className="skeleton">
-                            {toolName === 'getWeather' ? <Weather /> : null}
+                            Calling tool {toolCallId}
                           </div>
                         );
                       }
