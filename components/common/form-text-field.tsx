@@ -18,7 +18,7 @@ export default function FormTextField<T extends FieldValues>({
   error,
   isValid,
   value,
-  validMessage = 'Is valid'
+  validMessage = 'Is valid',
 }: FormTextFieldProps<T>) {
   return (
     <div className="lg-gap-3 flex flex-col gap-4">

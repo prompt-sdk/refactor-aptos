@@ -22,6 +22,12 @@ import { Textarea } from '@/components/ui/textarea';
 import MultiSelectTools from '../common/multi-select';
 const COIN_LIST_URL = 'https://raw.githubusercontent.com/AnimeSwap/coin-list/main/aptos/mainnet.js';
 
+interface WidgetParam {
+  name: string;
+  description: string;
+  type: string;
+}
+
 export function Tool({
   selectedModelName,
   session
@@ -50,7 +56,7 @@ export function Tool({
   const [previewWidgetCode, setPreviewWidgetCode] = useState<string>('');
   const [widgetPrompt, setWidgetPrompt] = useState<string>('');
   const [widgetCode, setWidgetCode] = useState<string>('');
-
+  const [widgetParams, setWidgetParams] = useState<WidgetParam[]>([]);
 
   const form = useForm({
     mode: 'onChange',
@@ -72,13 +78,34 @@ export function Tool({
     }
   });
 
+  const widgetParamsForm = useForm({
+    defaultValues: {
+      params: [{ name: '', description: '', type: '' }]
+    }
+  });
+
+
   const widgetForm = useForm({
     mode: 'onChange',
     defaultValues: {
-      name: '',
+      name:'',
       description: '',
+      params: widgetParams
     }
   });
+
+
+  const handleAddWidgetParam = () => {
+    const newParam = { name: '', description: '', type: '' };
+    setWidgetParams([...widgetParams, newParam]);
+  };
+
+  const handleRemoveWidgetParam = (index: number) => {
+    const updatedParams = widgetParams.filter((_, i) => i !== index);
+
+    setWidgetParams(updatedParams);
+    widgetParamsForm.setValue('params', updatedParams);
+  };
 
   const { control, setValue } = form;
   //console.log('form', form.getValues());
@@ -374,6 +401,12 @@ export function Tool({
     setFunctions(null);
     setSourceData({});
     setLoadingFunctions({});
+    widgetParamsForm.reset();
+    setWidgetPrompt('');
+    setWidgetCode('');
+    setSelectedWidgetTools([]);
+    setPreviewWidgetCode('');
+    setWidgetParams([]);
   };
 
   const isFormValid = useCallback(() => {
@@ -428,7 +461,9 @@ export function Tool({
     setWidgetCode('');
     setSelectedWidgetTools([]);
     setPreviewWidgetCode('');
-  }, [widgetForm]);
+    setWidgetParams([])
+    widgetParamsForm.reset()
+  }, [widgetForm,widgetParamsForm]);
 
   const handleSaveWidget = async () => {
     try {
@@ -439,6 +474,13 @@ export function Tool({
         prompt: widgetPrompt,
         code: widgetCode,
         toolWidget: selectedWidgetTools,
+        params: widgetParamsForm.getValues('params').some((param: any) => param.name.length > 0) ? widgetParamsForm.getValues('params').reduce((acc: any, param: any) => {
+          acc[param.name] = {
+            description: param.description,
+            type: param.type
+          };
+          return acc;
+        }, {}) : {},
         userId: userId
       };
 
@@ -498,8 +540,12 @@ export function Tool({
   const handleCloseCreateWidget = () => {
     setIsOpenCreateWidget(false);
     resetForm();
+    setWidgetParams([])
+
   };
 
+
+  //console.log(widgetParamsForm.getValues())
 
   return (
     <div className="flex flex-col min-w-0 h-dvh bg-background">
@@ -710,6 +756,45 @@ export function Tool({
                 onChangeSelectedTools={setSelectedWidgetTools}
               />
             </div>
+            <div className="mb-5 flex flex-col">
+              <div className="flex flex-row items-center justify-between">
+                <p className="text-lg font-semibold">Widget Parameters</p>
+                <CustomButton onClick={handleAddWidgetParam}>
+                  <span className="text-sm font-semibold">Add</span>
+                </CustomButton>
+              </div>
+              {widgetParams.map((param: WidgetParam, index: number) => (
+                <form key={index} className="mt-5 flex flex-col gap-3 text-sm">
+                  <FormTextField
+                    form={widgetParamsForm}
+                    name={`params.${index}.name`} // Updated to use dynamic field names
+                    label="Name"
+                    value={widgetParamsForm.getValues(`params.${index}.name`)} // Get value from form state
+                    //@ts-ignore
+                    onChange={e => widgetParamsForm.setValue(`params.${index}.name`, e.target.value)} // Update value on change
+                  />
+                  <FormTextField
+                    form={widgetParamsForm}
+                    name={`params.${index}.description`} // Updated to use dynamic field names
+                    label="Description"
+                    value={widgetParamsForm.getValues(`params.${index}.description`)} // Get value from form state
+                    //@ts-ignore
+                    onChange={e => widgetParamsForm.setValue(`params.${index}.description`, e.target.value)} // Update value on change
+                  />
+                  <FormTextField
+                    form={widgetParamsForm}
+                    name={`params.${index}.type`} // Updated to use dynamic field names
+                    label="Type"
+                    value={widgetParamsForm.getValues(`params.${index}.type`)} // Get value from form state
+                    //@ts-ignore
+                    onChange={e => widgetParamsForm.setValue(`params.${index}.type`, e.target.value)} // Update value on change
+                  />
+                  <CustomButton className="text-red-500" onClick={() => handleRemoveWidgetParam(index)}>
+                    Remove
+                  </CustomButton>
+                </form>
+              ))}
+            </div> 
             <div>
               <label className="mb-2 block text-sm font-medium text-white">Prompt</label>
               <Textarea

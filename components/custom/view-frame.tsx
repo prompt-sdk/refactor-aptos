@@ -48,7 +48,7 @@ export const ViewFrame = ({ code }: { code: string }) => {
     <>
       <ErrorBoundary fallback={<div>Something went wrong</div>}>
         <StringToReactComponent data={{ useEffect, useState, aptos, processData }}>
-          {truncatedCode != "default" && JSON.parse(truncatedCode)}
+          {truncatedCode}
         </StringToReactComponent>
       </ErrorBoundary>
     </>

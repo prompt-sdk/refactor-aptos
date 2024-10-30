@@ -32,7 +32,7 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { typeName, name, description, userId, id, ...otherProps } = body;
+    const { typeName, name, description, userId, id, params, ...otherProps } = body;
 
     if (!typeName || !name || !description || !userId) {
       return NextResponse.json(
@@ -78,7 +78,7 @@ export async function POST(request: NextRequest) {
         break;
 
       case 'contractTool':
-        const { params, typeFunction, functions, type_params } = otherProps;
+        const { typeFunction, functions, type_params } = otherProps;
         if (!params || !typeFunction || !functions) {
           return NextResponse.json(
             { error: 'Missing required fields for Contract tool' },
@@ -96,7 +96,7 @@ export async function POST(request: NextRequest) {
 
       case 'widgetTool':
         const { prompt, code, toolWidget } = otherProps;
-        if (!prompt || !code || !toolWidget) {
+        if (!prompt || !toolWidget) {
           return NextResponse.json(
             { error: 'Missing required fields for Widget tool' },
             { status: 400 }
@@ -105,6 +105,7 @@ export async function POST(request: NextRequest) {
         result = await createWidgetTool({
           ...commonProps,
           prompt,
+          params,
           code: JSON.stringify(code),
           toolWidget,
         } as Tool);

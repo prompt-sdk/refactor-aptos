@@ -254,6 +254,7 @@ export async function createWidgetTool({
   code,
   toolWidget,
   userId,
+  params
 }: Tool) {
   try {
     return await db.insert(tool).values({
@@ -265,6 +266,7 @@ export async function createWidgetTool({
       code,
       toolWidget,
       userId,
+      params
     });
   } catch (error) {
     console.error('Failed to create user in database');
