@@ -24,6 +24,12 @@ type ChatTemplate = {
   content: string;
 };
 
+type WidgetParam = {
+  name: string;
+  description: string;
+  type: string;
+};
+
 export function Agent({
   selectedModelName,
   session
@@ -39,6 +45,7 @@ export function Agent({
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
   const [chatTemplates, setChatTemplates] = useState<ChatTemplate[]>([]);
+  const [widgetParams, setWidgetParams] = useState<WidgetParam[]>([]);
 
   const agentForm = useForm({
     defaultValues: {
@@ -49,13 +56,20 @@ export function Agent({
       tools: [],
       widget: [],
       prompt: '',
-      messenge_template: [] as ChatTemplate[]
+      messenge_template: [] as ChatTemplate[],
+      params: [] as WidgetParam[]
     }
   });
 
   const chatTemplateForm = useForm({
     defaultValues: {
       templates: [{ title: '', description: '', content: '' }] // Initialize with one template
+    }
+  });
+
+  const widgetParamsForm = useForm({
+    defaultValues: {
+      params: [{ name: '', description: '', type: '' }] // Initialize with one parameter
     }
   });
 
@@ -92,6 +106,7 @@ export function Agent({
     widget: string[];
     prompt: string;
     messenge_template: any[]; // Change this to any[]
+    params: WidgetParam[];
   }) => {
     try {
       const response = await fetch('/api/agents', {
@@ -118,6 +133,7 @@ export function Agent({
     widget: string[];
     prompt: string;
     messenge_template: ChatTemplate[];
+    params: WidgetParam[];
   }) => {
     try {
       const userId = session?.user?.id;
@@ -133,8 +149,11 @@ export function Agent({
           : [],
         userId: userId,
         createdAt: Date.now(),
-        address: session?.user?.username
+        params: widgetParamsForm.getValues('params').some(param => param.name.length > 0)
+          ? widgetParamsForm.getValues('params')
+          : []
       };
+      console.log('agentData', agentData);
       //@ts-ignore
       await createAgentAPI(agentData);
 
@@ -198,12 +217,24 @@ export function Agent({
     }
   };
 
+  const handleAddWidgetParam = () => {
+    const newParam = { name: '', description: '', type: '' };
+    setWidgetParams([...widgetParams, newParam]);
+  };
+
   // Function to remove a chat template
   const handleRemoveChatTemplate = (index: number) => {
     const updatedTemplates = chatTemplates.filter((_, i) => i !== index);
 
     setChatTemplates(updatedTemplates);
     chatTemplateForm.setValue('templates', updatedTemplates);
+  };
+
+  const handleRemoveWidgetParam = (index: number) => {
+    const updatedParams = widgetParams.filter((_, i) => i !== index);
+
+    setWidgetParams(updatedParams);
+    widgetParamsForm.setValue('params', updatedParams);
   };
 
   const handleAvatarChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -341,6 +372,45 @@ export function Agent({
                     onChange={e => chatTemplateForm.setValue(`templates.${index}.content`, e.target.value)} // Update value on change
                   />
                   <CustomButton className="text-red-500" onClick={() => handleRemoveChatTemplate(index)}>
+                    Remove
+                  </CustomButton>
+                </form>
+              ))}
+            </div>
+            <div className="mb-5 flex flex-col">
+              <div className="flex flex-row items-center justify-between">
+                <p className="text-lg font-semibold">Widget Parameters</p>
+                <CustomButton onClick={handleAddWidgetParam}>
+                  <span className="text-sm font-semibold">Add</span>
+                </CustomButton>
+              </div>
+              {widgetParams.map((param: WidgetParam, index: number) => (
+                <form key={index} className="mt-5 flex flex-col gap-3 text-sm">
+                  <FormTextField
+                    form={widgetParamsForm}
+                    name={`params.${index}.name`} // Updated to use dynamic field names
+                    label="Name"
+                    value={widgetParamsForm.getValues(`params.${index}.name`)} // Get value from form state
+                    //@ts-ignore
+                    onChange={e => widgetParamsForm.setValue(`params.${index}.name`, e.target.value)} // Update value on change
+                  />
+                  <FormTextField
+                    form={widgetParamsForm}
+                    name={`params.${index}.description`} // Updated to use dynamic field names
+                    label="Description"
+                    value={widgetParamsForm.getValues(`params.${index}.description`)} // Get value from form state
+                    //@ts-ignore
+                    onChange={e => widgetParamsForm.setValue(`params.${index}.description`, e.target.value)} // Update value on change
+                  />
+                  <FormTextField
+                    form={widgetParamsForm}
+                    name={`params.${index}.type`} // Updated to use dynamic field names
+                    label="Type"
+                    value={widgetParamsForm.getValues(`params.${index}.type`)} // Get value from form state
+                    //@ts-ignore
+                    onChange={e => widgetParamsForm.setValue(`params.${index}.type`, e.target.value)} // Update value on change
+                  />
+                  <CustomButton className="text-red-500" onClick={() => handleRemoveWidgetParam(index)}>
                     Remove
                   </CustomButton>
                 </form>

@@ -12,11 +12,13 @@ import WidgetFrame2 from '@/public/assets/svgs/widget-frame-2.svg';
 
 import { User } from '@/db/schema';
 interface WidgetOption {
-  _id: string;
+  id: string;
   type: string;
   name: string;
   tool: any;
   icon: string;
+  description: string;
+  code: string;
 }
 
 type WidgetSelectionModalProps = {
@@ -39,8 +41,9 @@ export const WidgetSelectionModal: FC<WidgetSelectionModalProps> = ({ className,
         throw new Error('Failed to fetch tools');
       }
       const data = await response.json();
-      const filteredTools = data.filter((tool: any) => tool.type === 'widgetTool');
-
+      //console.log('data', data);
+      const filteredTools = data.filter((tool: any) => tool.typeName === 'widgetTool');
+      //console.log('filteredTools', filteredTools);
       setWidgetOptions(filteredTools);
     } catch (error) {
       console.error('Error fetching widget tools:', error);
@@ -65,12 +68,16 @@ export const WidgetSelectionModal: FC<WidgetSelectionModalProps> = ({ className,
 
   const handleAddWidget = () => {
     if (selectedWidget) {
-      const widgetToAdd = widgetOptions.find(widget => widget._id === selectedWidget);
+      const widgetToAdd = widgetOptions.find(widget => widget.id === selectedWidget);
 
       if (widgetToAdd) {
         const sizes = ['small', 'medium', 'large'];
         const randomSize = sizes[Math.floor(Math.random() * sizes.length)];
-        const widgetWithSize = { ...widgetToAdd, size: 'fit', index: widgetOptions?.length };
+        const widgetWithSize = { 
+          ...widgetToAdd, 
+          size: 'fit', 
+          index: widgetOptions?.length,
+        };
 
         //@ts-ignore
         addWidget(widgetWithSize);
@@ -78,6 +85,7 @@ export const WidgetSelectionModal: FC<WidgetSelectionModalProps> = ({ className,
       }
     }
   };
+
   return (
     <AugmentedPopup className="max-w-3xl" visible={isOpen} textHeading="Select Widget" onClose={closeWidgetModal}>
       <div className="flex max-h-[80vh] flex-col gap-5 overflow-y-auto p-8">
@@ -89,25 +97,25 @@ export const WidgetSelectionModal: FC<WidgetSelectionModalProps> = ({ className,
             ) : (
               widgetOptions.map(option => (
                 <BorderImage
-                  key={option._id}
+                  key={option.id}
                   imageBoder={WidgetFrame2.src} // Use your desired border image URL
                   className="w-full cursor-pointer rounded-md shadow-sm transition-shadow hover:shadow-md"
                 >
                   <div
                     className="flex flex-col items-start justify-start gap-3"
                     onClick={() => {
-                      handleSelectWidget(option._id); // Select the widget
+                      handleSelectWidget(option.id); // Select the widget
                       handleAddWidget(); // Add the widget immediately
                     }}
                   >
                     <div className="flex w-full flex-col gap-1 border-b-[0.5px] border-gray-700">
                       <div className="flex flex-col gap-1 p-2 pb-4">
                         <span className="font-semibold">{option.name}</span>
-                        <span className="text-sm text-gray-300">{option.tool.description.slice(0, 20) + '...'}</span>
+                        <span className="text-sm text-gray-300">{option?.description.slice(0, 20) + '...'}</span>
                       </div>
                     </div>
                     <div className="mt-4"></div>
-                    <ViewFrameDashboard id={option._id.toString()} code={option.tool?.code} />
+                    <ViewFrameDashboard id={option.id} code={option?.code} />
                   </div>
                 </BorderImage>
               ))

@@ -65,13 +65,11 @@ const DashboardWidgetTools: FC<DashboardWidgetToolsProps> = ({ className, widget
 
   const handleAddInputWidget = () => {
     const newWidget = {
-      _id: Date.now().toString(),
+      id: Date.now().toString(),
       type: WIDGET_TYPES.INPUT,
       name: 'Input Widget',
       icon: 'ico-file-text-edit',
-      tool: {
-        code: 'default'
-      },
+      code: 'default',
       size: WIDGET_SIZE.SMALL
     };
 

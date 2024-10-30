@@ -48,12 +48,13 @@ export const ViewFrame = ({ code }: { code: string }) => {
     <>
       <ErrorBoundary fallback={<div>Something went wrong</div>}>
         <StringToReactComponent data={{ useEffect, useState, aptos, processData }}>
-          {truncatedCode}
+          {truncatedCode != "default" && JSON.parse(truncatedCode)}
         </StringToReactComponent>
       </ErrorBoundary>
     </>
   );
 };
+
 export const ViewFrameDashboard = ({ code, id }: { code: string; id: string }) => {
   const config = new AptosConfig({ network: Network.MAINNET });
   const aptos = new Aptos(config);
@@ -93,11 +94,13 @@ export const ViewFrameDashboard = ({ code, id }: { code: string; id: string }) =
 
   const truncatedCode = truncateAddressesInCode(code);
 
+  //console.log('truncatedCode', truncatedCode);
+
   return (
     <>
       <ErrorBoundary fallback={<div>Something went wrong</div>}>
         <StringToReactComponent data={{ useEffect, useState, aptos, processData, widgetId: id }}>
-          {truncatedCode}
+          {truncatedCode != "default" && truncatedCode != "" && JSON.parse(truncatedCode)}
         </StringToReactComponent>
       </ErrorBoundary>
     </>

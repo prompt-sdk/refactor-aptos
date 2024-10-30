@@ -76,32 +76,32 @@ const DashboardNotesBoard: React.FC<DashboardNotesBoardProps> = ({ address }) =>
 
   return (
     <DndProvider backend={HTML5Backend}>
-      <div className="flex min-h-[200px] flex-wrap px-6">
+      <div key={widgetsList.length} className="flex min-h-[200px] flex-wrap px-6">
         {widgetsList.map((widget, index) => (
           <Note
-            key={widget.index}
-            id={widget._id}
+            key={index}
+            id={widget.id}
             index={index}
             moveNote={moveNote}
             size={widget.size || WIDGET_SIZE.MEDIUM}
-            isSelected={selectedWidgetId === widget._id}
-            onClick={() => handleWidgetClick(widget._id)}
+            isSelected={selectedWidgetId === widget.id}
+            onClick={() => handleWidgetClick(widget.id)}
             onClickOutside={handleClickOutside}
             onDelete={handleClickDelete}
             onChangeSize={handleChangeSize}
           >
             {widget.type === 'image' ? (
               <img
-                src={widget.tool?.code || ''}
+                src={widget.code || ''}
                 width={400}
                 height={400}
-                alt={widget.tool?.description || 'Widget Image'}
+                alt={widget.description || 'Widget Image'}
                 className="absolute left-1/2 top-1/2 h-full w-full -translate-x-1/2 -translate-y-1/2 object-cover"
               />
             ) : widget.type === 'text' ? (
               <span>{widget.content}</span>
             ) : (
-              <ViewFrameDashboard id={widget._id.toString()} code={widget.tool?.code || ''} />
+              <ViewFrameDashboard id={widget.id} code={widget.code || ''} />
             )}
           </Note>
         ))}

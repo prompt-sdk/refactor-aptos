@@ -1,8 +1,8 @@
 import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
+import { createJSONStorage, persist } from 'zustand/middleware';
 
 export type Widget = {
-    _id: string;
+    id: string;
     index?: number;
     type: WIDGET_TYPES;
     name?: string;
@@ -10,11 +10,8 @@ export type Widget = {
     content?: string;
     size?: WIDGET_SIZE;
     user_id?: string;
-    tool?: {
-      code: string;
-      description?: string;
-      type?: string;
-    };
+    code?: string;
+    description?: string;
   };
 
 export enum WIDGET_TYPES {
@@ -33,7 +30,7 @@ export enum WIDGET_TYPES {
   
 export const DUMMY_WIDGET_LIST: Widget[] = [
     {
-      _id: '1',
+      id: '1',
       index: 0,
       type: WIDGET_TYPES.TEXT,
       content: 'Welcome',
@@ -41,7 +38,7 @@ export const DUMMY_WIDGET_LIST: Widget[] = [
       user_id: ''
     },
     {
-      _id: '2',
+      id: '2',
       index: 1,
       type: WIDGET_TYPES.TEXT,
       content: 'To',
@@ -49,10 +46,11 @@ export const DUMMY_WIDGET_LIST: Widget[] = [
       user_id: ''
     },
     {
-      _id: '3',
+      id: '3',
       index: 2,
       type: WIDGET_TYPES.IMAGE,
-      tool: { code: '/assets/background.jpg', description: 'Prompt Wallet' },
+      code: '/assets/background.jpg', 
+      description: 'Prompt Wallet',
       size: WIDGET_SIZE.LARGE,
       user_id: ''
     }
@@ -80,7 +78,7 @@ export const useWidgetModal = create(
       updateWidget: (widgetId, widget) =>
         set(state => {
           const updatedWidgets = state.widgets.map(w => {
-            if (w._id === widgetId) {
+            if (w.id === widgetId) {
               return { ...w, ...widget };
             }
 
@@ -91,7 +89,7 @@ export const useWidgetModal = create(
         }),
       addWidget: (widget: Widget) =>
         set((state: any) => {
-          if (!state.widgets.some((w: any) => w._id === widget._id)) {
+          if (!state.widgets.some((w: any) => w.id === widget.id)) {
             return { widgets: [...state.widgets, widget] };
           }
 
@@ -99,7 +97,7 @@ export const useWidgetModal = create(
         }),
       removeWidget: (widgetId: string) =>
         set(state => ({
-          widgets: state.widgets.filter(widget => widget._id !== widgetId)
+          widgets: state.widgets.filter(widget => widget.id !== widgetId)
         })),
       moveWidget: (widgetId: number, newIndex: number) =>
         set(state => {
@@ -117,13 +115,11 @@ export const useWidgetModal = create(
       addImageWidget: (imageData: string) =>
         set(state => {
           const newWidget: Widget = {
-            _id: Date.now().toString(),
+            id: Date.now().toString(),
             type: WIDGET_TYPES.IMAGE,
             name: 'Image Widget',
             icon: 'ico-image',
-            tool: {
-              code: imageData
-            },
+            code: imageData,
             size: WIDGET_SIZE.LARGE
           };
 
@@ -132,8 +128,7 @@ export const useWidgetModal = create(
     }),
     {
       name: 'widget-storage',
-      //@ts-ignore
-      getStorage: () => localStorage
+      storage: createJSONStorage(() => localStorage)
     }
   )
 );
