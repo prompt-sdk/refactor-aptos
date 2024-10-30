@@ -1,7 +1,10 @@
 import { type ClassValue, clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 import { Aptos, AptosConfig, Network } from '@aptos-labs/ts-sdk';
-import { z } from 'zod';
+import { z, ZodSchema, ZodTypeAny } from 'zod';
+import { tool } from 'ai';
+import axios from 'axios';
+import { zodToJsonSchema } from 'zod-to-json-schema';
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
@@ -39,72 +42,120 @@ interface Tool {
     payload: any
   ) => AsyncGenerator<JSX.Element, { data: string; node: JSX.Element }, void>;
 }
+export const extractParameters = (param: any, paramZodObj: any) => {
+  const paramSchema = param.schema;
+  const paramName = param.name;
+  const paramDesc = param.description || param.name;
 
-const convertSchemaToParams = (param: any): any => {
-  if (!param.type) {
-    return Object.keys(param).reduce(
-      (acc, key) => {
-        acc[key] = convertSchemaToParams(param[key]);
-        return acc;
-      },
-      {} as Record<string, any>
-    );
-  }
-
-  switch (param.type) {
-    case 'string':
-      return z.string().describe(param.description);
-    case 'integer':
-      return z.number().describe(param.description);
-    case 'boolean':
-      return z.boolean().describe(param.description);
-    case 'array':
-      return z.array(convertSchemaToParams(param.items));
-    case 'object':
-      return z.object(convertSchemaToParams(param.properties));
-    default:
-      console.warn('Unsupported type', param.type);
-      return z.string().describe('unknown description');
-  }
-};
-
-const getParametersFromSchema = (schema: any) => {
-  return schema.parameters
-    ? z.object(
-        schema.parameters.reduce((acc: any, param: any) => {
-          acc[param.name] = convertSchemaToParams(param.schema || {});
-          return acc;
-        }, {})
-      )
-    : z.object({});
-};
-
-export const parseRequestBody = (methodSchema: any, itemTool: any) => {
-  let parameters;
-  let typeRequest = '';
-
-  if (methodSchema.requestBody) {
-    const { content } = methodSchema.requestBody;
-    const schemaRef = content?.['application/json']?.schema['$ref']
-      ?.split('/')
-      .pop();
-
-    if (content?.['application/json']) {
-      typeRequest = 'application/json';
-      parameters = itemTool.components.schemas[schemaRef] || {};
-    } else if (content?.['application/octet-stream']) {
-      typeRequest = 'application/octet-stream';
-      parameters = content['application/octet-stream'].schema;
-    } else if (content?.['application/x-www-form-urlencoded']) {
-      typeRequest = 'application/x-www-form-urlencoded';
-      parameters = content['application/x-www-form-urlencoded'].schema;
+  if (paramSchema.type === 'string') {
+    if (param.required) {
+      paramZodObj[paramName] = z
+        .string({ required_error: `${paramName} required` })
+        .describe(paramDesc);
+    } else {
+      paramZodObj[paramName] = z.string().describe(paramDesc).optional();
     }
-    parameters = convertSchemaToParams(parameters);
-  } else {
-    parameters = getParametersFromSchema(methodSchema);
+  } else if (paramSchema.type === 'number') {
+    if (param.required) {
+      paramZodObj[paramName] = z
+        .number({ required_error: `${paramName} required` })
+        .describe(paramDesc);
+    } else {
+      paramZodObj[paramName] = z.number().describe(paramDesc).optional();
+    }
+  } else if (paramSchema.type === 'boolean') {
+    if (param.required) {
+      paramZodObj[paramName] = z
+        .boolean({ required_error: `${paramName} required` })
+        .describe(paramDesc);
+    } else {
+      paramZodObj[paramName] = z.boolean().describe(paramDesc).optional();
+    }
   }
 
-  return { parameters, typeRequest };
+  return paramZodObj;
+};
+export const getUrl = (baseUrl: string, requestObject: any) => {
+  let url = baseUrl
+
+  // Add PathParameters to URL if present
+  if (requestObject.PathParameters) {
+      for (const [key, value] of Object.entries(requestObject.PathParameters)) {
+          url = url.replace(`{${key}}`, encodeURIComponent(String(value)))
+      }
+  }
+
+  // Add QueryParameters to URL if present
+  if (requestObject.QueryParameters) {
+      const queryParams = new URLSearchParams(requestObject.QueryParameters as Record<string, string>)
+      url += `?${queryParams.toString()}`
+  }
+
+  return url
+}
+export const jsonSchemaToZodSchema = (
+  schema: any,
+  requiredList: string[],
+  keyName: string
+): ZodSchema<any> => {
+  if (schema.properties) {
+    // Handle object types by recursively processing properties
+    const zodShape: Record<string, ZodTypeAny> = {};
+    for (const key in schema.properties) {
+      zodShape[key] = jsonSchemaToZodSchema(
+        schema.properties[key],
+        requiredList,
+        key
+      );
+    }
+    return z.object(zodShape);
+  } else if (schema.oneOf) {
+    // Handle oneOf by mapping each option to a Zod schema
+    const zodSchemas = schema.oneOf.map((subSchema: any) =>
+      jsonSchemaToZodSchema(subSchema, requiredList, keyName)
+    );
+    return z.union(zodSchemas);
+  } else if (schema.enum) {
+    // Handle enum types
+    return requiredList.includes(keyName)
+      ? z.enum(schema.enum).describe(schema?.description ?? keyName)
+      : z
+          .enum(schema.enum)
+          .describe(schema?.description ?? keyName)
+          .optional();
+  } else if (schema.type === 'string') {
+    return requiredList.includes(keyName)
+      ? z
+          .string({ required_error: `${keyName} required` })
+          .describe(schema?.description ?? keyName)
+      : z
+          .string()
+          .describe(schema?.description ?? keyName)
+          .optional();
+  } else if (schema.type === 'array') {
+    return z.array(jsonSchemaToZodSchema(schema.items, requiredList, keyName));
+  } else if (schema.type === 'boolean') {
+    return requiredList.includes(keyName)
+      ? z
+          .number({ required_error: `${keyName} required` })
+          .describe(schema?.description ?? keyName)
+      : z
+          .number()
+          .describe(schema?.description ?? keyName)
+          .optional();
+  } else if (schema.type === 'number') {
+    return requiredList.includes(keyName)
+      ? z
+          .boolean({ required_error: `${keyName} required` })
+          .describe(schema?.description ?? keyName)
+      : z
+          .boolean()
+          .describe(schema?.description ?? keyName)
+          .optional();
+  }
+
+  // Fallback to unknown type if unrecognized
+  return z.unknown();
 };
 
 export const zodExtract = (type: any, describe: any) => {
@@ -186,25 +237,5 @@ export async function makeRequest(
       const urlEncodedData = new URLSearchParams(payload).toString();
       options.body = urlEncodedData;
     }
-  }
-
-  // Make the API request
-  try {
-    const response = await fetch(endpoint, options);
-
-    // Handle non-OK responses
-    if (!response.ok) {
-      const errorMessage =
-        response.status === 401
-          ? 'Unauthorized: Invalid or expired token.'
-          : `Error: ${response.status} ${response.statusText}`;
-      return { err: errorMessage };
-    }
-
-    // Parse and return the response data
-    return await response.json();
-  } catch (error) {
-    console.error('Failed to make API request:', error);
-    return `Failed to make API request: ${error}`;
   }
 }
