@@ -78,9 +78,6 @@ export const WidgetSelectionModal: FC<WidgetSelectionModalProps> = ({ className,
       }
     }
   };
-
-  console.log('widgetOptions', widgetOptions);
-
   return (
     <AugmentedPopup className="max-w-3xl" visible={isOpen} textHeading="Select Widget" onClose={closeWidgetModal}>
       <div className="flex max-h-[80vh] flex-col gap-5 overflow-y-auto p-8">

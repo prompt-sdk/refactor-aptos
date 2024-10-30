@@ -119,7 +119,11 @@ export const Message = ({
                             ) :
                               typeTool == 'widgetTool' ?
                                 <ViewFrame code={result} /> :
-                                `Calling ${typeTool == 'contractTool' ? 'Contract' : typeTool == 'widgetTool' ? 'Widget' : typeTool == 'apiTool' ? 'API Tool' : 'unknow Tool'} ${toolCallId}`
+                                `Calling ${typeTool == 'contractTool' ?
+                                  'Contract' : typeTool == 'widgetTool' ?
+                                    'Widget' : typeTool == 'apiTool' ?
+                                      'API Tool' : 'unknow Tool'}
+                                    ${toolCallId}`
                             }
 
                           </div>
