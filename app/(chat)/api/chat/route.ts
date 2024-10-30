@@ -53,7 +53,6 @@ export async function POST(request: Request) {
 
   const toolData = tools.reduce((tool: any, item: any) => {
     if (item.typeName == 'contractTool') {
-      console.log(item.params)
       const filteredObj: any = convertParamsToZod(item.params);
       const ParametersSchema: any = Object.fromEntries(
         Object.entries(filteredObj).filter(
@@ -106,10 +105,16 @@ export async function POST(request: Request) {
       //if view return data
     }
     if (item.typeName == 'widgetTool') {
+      const filteredObj: any = convertParamsToZod(item.params);
+      const ParametersSchema: any = Object.fromEntries(
+        Object.entries(filteredObj).filter(
+          ([key, value]) => value !== undefined
+        )
+      );
       tool[item.typeName + '_' + item.typeFunction + '_' + generateId()] = {
         description: item.description,
         parameters: z.object({}),
-        execute: async (testParams: any) => {
+        execute: async (ParametersSchema: ParametersData) => {
           return item.code;
         },
       };

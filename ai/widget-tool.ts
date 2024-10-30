@@ -68,9 +68,7 @@ export async function widgetTool({ prompt }: any) {
   Example 2 – Action Button with Custom Text:
   Input:
   
-  Stake 0.1 APTOS  
-  
-  Create an action button with label "Save"
+  Create an action button with label "Stake" and  Stake 0.1 APTOS  
   Output:
   
   (props) => {
@@ -105,6 +103,20 @@ export async function widgetTool({ prompt }: any) {
       load();
     }, []);
     return <p>Balance of 0x3deb6f4432df882e2ffd8250cd9642e74a19a1720a541014850c9ea1d92d67c1:{props.processData(balance)}</p>;
+  }
+
+  Example 4 – Compoment with JSON data:
+  Input:
+  create compoment to show data { params1 : "1" , params2:"2"} 
+
+  Output:
+  (props)=>{
+  const data = { params1 : "1" , params1:"2"}
+
+    return( <> 
+    <p>{data.params1}</p>
+    <p>{data.params2}</p> 
+          </>);
   }
   `);
 
