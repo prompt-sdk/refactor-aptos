@@ -57,7 +57,6 @@ export function Agent({
       widget: [],
       prompt: '',
       messenge_template: [] as ChatTemplate[],
-      params: [] as WidgetParam[]
     }
   });
 
@@ -106,7 +105,6 @@ export function Agent({
     widget: string[];
     prompt: string;
     messenge_template: any[]; // Change this to any[]
-    params: WidgetParam[];
   }) => {
     try {
       const response = await fetch('/api/agents', {
@@ -133,7 +131,6 @@ export function Agent({
     widget: string[];
     prompt: string;
     messenge_template: ChatTemplate[];
-    params: WidgetParam[];
   }) => {
     try {
       const userId = session?.user?.id;
@@ -148,12 +145,8 @@ export function Agent({
           ? chatTemplateForm.getValues('templates')
           : [],
         userId: userId,
-        createdAt: Date.now(),
-        params: widgetParamsForm.getValues('params').some(param => param.name.length > 0)
-          ? widgetParamsForm.getValues('params')
-          : []
+        createdAt: Date.now()
       };
-      console.log('agentData', agentData);
       //@ts-ignore
       await createAgentAPI(agentData);
 
@@ -377,7 +370,7 @@ export function Agent({
                 </form>
               ))}
             </div>
-            <div className="mb-5 flex flex-col">
+            {/* <div className="mb-5 flex flex-col">
               <div className="flex flex-row items-center justify-between">
                 <p className="text-lg font-semibold">Widget Parameters</p>
                 <CustomButton onClick={handleAddWidgetParam}>
@@ -415,7 +408,7 @@ export function Agent({
                   </CustomButton>
                 </form>
               ))}
-            </div>
+            </div> */}
             <CustomButton disabled={!isValid()} onClick={agentForm.handleSubmit(handleCreateAgent)}>
               <span className="text-sm font-semibold">Create Agent</span>
             </CustomButton>
