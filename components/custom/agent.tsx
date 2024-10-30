@@ -257,7 +257,7 @@ export function Agent({
             ) : agents?.length > 0 ? (
               <div className="grid w-full grid-cols-3 gap-4 ">
                 {agents.map((agent: any) => (
-                  <Link key={agent.id} href={`/?startAgent=${agent.id}`}>
+                  <Link key={agent.id} href={`/chat?startAgent=${agent.id}`}>
                     <BoderImage
                       imageBoder={WidgetFrame2.src}
                       className="flex flex-col items-start justify-between gap-2 rounded-lg border p-4 shadow-sm transition-shadow hover:shadow-md"

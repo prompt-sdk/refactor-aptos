@@ -1,55 +1,24 @@
-import { cookies } from 'next/headers';
-import { createAgent, getAgentById, getToolById, getTools } from '@/db/queries';
-import { Agent } from '@/db/schema';
-
-import { Chat } from '@/components/custom/chat';
-import { DEFAULT_MODEL_NAME, models } from '@/lib/model';
-import { generateUUID } from '@/lib/utils';
-import { AgentDefault } from '@/ai/default-agent';
 import { auth } from '@/app/(auth)/auth';
-import { notFound } from 'next/navigation';
+import MainFooter from '@/components/common/footers/main-footer';
+import MainHeader from '@/components/common/headers/main-header';
 
+import DashboardProfile from '@/components/custom/dashboard-profile';
+import DashboardWidget from '@/components/custom/dashboard-widget';
+import { WidgetSelectionModal } from '@/components/custom/widget-selection-modal';
 
 
 export default async function Page(props: { searchParams: Promise<any> }) {
   const session: any = await auth()
-  const id = generateUUID();
-  const searchParams = await props.searchParams;
-  const { startAgent, widgetId, prompt } = searchParams;
-
-  let agent: Agent;
-  if (startAgent) {
-    agent = await getAgentById(startAgent)
-  } else {
-    if (widgetId) {
-      const [widget] = await getToolById(widgetId)
-      AgentDefault.tool = widget.toolWidget
-    }
-    AgentDefault.userId = session?.user?.id;
-    [agent] = await createAgent(AgentDefault)
-  }
-  if (!agent) {
-    return notFound()
-  }
-
-
-  // start prompt
-  const tools = await getTools(agent.tool as any);
-  const cookieStore = await cookies();
-  const value = cookieStore.get('model')?.value;
-  const selectedModelName =
-    models.find((m) => m.name === value)?.name || DEFAULT_MODEL_NAME;
+  const user = session.user;
 
   return (
-    <Chat
-      username={session.user.username}
-      key={id}
-      id={id}
-      initialMessages={[]}
-      selectedModelName={selectedModelName}
-      tools={tools}
-      prompt={prompt}
-      agent={agent}
-    />
-  );
+    <div className={'flex w-full grow items-center justify-center py-4'}>
+      <div className="container flex flex-col items-center justify-center gap-6">
+        <MainHeader />
+        <DashboardProfile user={user} />
+        <DashboardWidget user={user} />
+        <WidgetSelectionModal user={user} />
+        <MainFooter />
+      </div>
+    </div>);
 }
