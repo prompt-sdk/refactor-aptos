@@ -34,6 +34,7 @@ export default async function Page(props: { searchParams: Promise<any> }) {
 
 
   const tools = await getTools(agent.tool as any);
+  
   const cookieStore = await cookies();
   const value = cookieStore.get('model')?.value;
   const selectedModelName =
